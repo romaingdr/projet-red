@@ -8,25 +8,130 @@ import (
 	"os/exec"
 	"runtime"
 	"strconv"
+	"strings"
 	"time"
+	"unicode"
 )
 
 // Fonction main du programme et initialisation du personnage
 
 func main() {
+	clearConsole()
 	var p1 Personnage
-	p1.Initialize("Romain", "elfe", 1, 40, 100, map[string]int{"Potions": 3, "Argent": 10})
+	p1.createCaracter()
 	p1.Menu()
 
 }
 
-func (p *Personnage) Initialize(nom string, classe string, niveau int, hp int, hp_max int, inventaire map[string]int) {
+func choixClasse() string {
+	clearConsole()
+	green := color.New(color.FgGreen)
+	blue := color.New(color.FgBlue)
+	green.Println("Nom du personnage validé !")
+	blue.Println("Choisissez votre classe : ")
+	classes := []string{"Titan", "Arcaniste", "Chasseur"}
+	println("")
+	println("[1] Titan : blablabla")
+	println("[2] Arcaniste : blablabla")
+	println("[3] Chasseur : blablabla")
+	println("")
+	print("")
+	choice := inputint()
+	if choice > 0 && choice < 4 {
+		return classes[choice-1]
+	} else {
+		choixClasse()
+	}
+	return ""
+}
+
+func seulementLettres(input string) bool {
+	for _, char := range input {
+		if !unicode.IsLetter(char) {
+			return false
+		}
+	}
+	return true
+}
+
+func majString(input string) string {
+	// Convertir la première lettre en majuscule
+	if len(input) > 0 {
+		input = strings.ToUpper(string(input[0])) + strings.ToLower(input[1:])
+	}
+	return input
+}
+
+func welcomeMsg(message string) {
+	green := color.New(color.FgGreen)
+	for _, char := range message {
+		green.Print(string(char))
+		time.Sleep(100 * time.Millisecond)
+	}
+	fmt.Println("")
+	fmt.Println("Appuyez sur entrée pour continuer")
+
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	clearConsole()
+}
+
+func (p *Personnage) createCaracter() {
+	red := color.New(color.FgRed)
+	fmt.Println("---- Création du personnage ----")
+	fmt.Println("[1] Créer un personnage")
+	fmt.Println("[2] Personnage par défault")
+	fmt.Println("--------------------------------")
+	choice := inputint()
+	switch choice {
+	case 1:
+		hp_max := 0
+		nom := "0"
+		clearConsole()
+		print("Nom de votre personnage ")
+		nom = input()
+		for !(seulementLettres(nom)) {
+			clearConsole()
+			red.Println("Veuillez n'utiliser que des lettres")
+			print("Nom de votre personnage ")
+			nom = input()
+		}
+		nom = majString(nom)
+		clearConsole()
+		classe := choixClasse()
+		switch classe {
+		case "Titan":
+			hp_max = 150
+		case "Chasseur":
+			hp_max = 125
+		case "Aracaniste":
+			hp_max = 100
+		}
+		clearConsole()
+		p.Initialize(nom, classe, 1, hp_max, hp_max, map[string]int{"Potions": 3, "Argent": 10}, []string{"Coup de poing"})
+		welcomeMsg("Bienvenue, " + nom + " ! ")
+
+	case 2:
+		p.Initialize("Romain", "Chasseur", 1, 67, 125, map[string]int{"Potions": 3, "Argent": 10}, []string{"Coup de poing"})
+		clearConsole()
+		welcomeMsg("Bienvenue, Romain !")
+
+	default:
+		clearConsole()
+		red.Println("Veuillez saisir une donnée valide")
+		p.createCaracter()
+	}
+
+}
+
+func (p *Personnage) Initialize(nom string, classe string, niveau int, hp int, hp_max int, inventaire map[string]int, skill []string) {
 	p.nom = nom
 	p.classe = classe
 	p.niveau = niveau
 	p.current_hp = hp
 	p.max_hp = hp_max
 	p.inventory = inventaire
+	p.skill = skill
 }
 
 // Structure du personnage
@@ -38,6 +143,7 @@ type Personnage struct {
 	current_hp int
 	max_hp     int
 	inventory  map[string]int
+	skill      []string
 }
 
 // Interaction avec la console
@@ -83,10 +189,14 @@ func input() string {
 // Menu principal du jeu
 
 func (p *Personnage) Menu() {
+	red := color.New(color.FgRed)
+	fmt.Println("----- Menu -----")
 	fmt.Println("[1] Personnage")
 	fmt.Println("[2] Inventaire")
 	fmt.Println("[3] Marchand")
-	fmt.Println("[4] Quitter le jeu")
+	fmt.Println("[4] Abilités")
+	fmt.Println("[5] Quitter le jeu")
+	fmt.Println("----------------")
 
 	choice := inputint()
 
@@ -106,10 +216,14 @@ func (p *Personnage) Menu() {
 		p.marchand()
 	case 4:
 		clearConsole()
-		fmt.Println("Fermeture du jeu...")
+		p.showSkills()
+		p.Menu()
+	case 5:
+		clearConsole()
+		red.Println("Fermeture du jeu...")
 	default:
 		clearConsole()
-		fmt.Println("Veuillez saisir une donnée valide !")
+		red.Println("Veuillez saisir une donnée valide !")
 		p.Menu()
 	}
 }
@@ -132,9 +246,11 @@ func (p *Personnage) poisonPot() {
 }
 
 func (p *Personnage) takePot() {
+	red := color.New(color.FgRed)
+	blue := color.New(color.FgBlue)
 	if p.inventory["Potions"] > 0 {
 		if p.current_hp == p.max_hp {
-			fmt.Println("Vous êtes déjà au maximum de points de vie !")
+			red.Println("Vous êtes déjà au maximum de points de vie !")
 		} else {
 			if p.max_hp-p.current_hp < 50 {
 				p.current_hp = p.max_hp
@@ -142,8 +258,8 @@ func (p *Personnage) takePot() {
 				p.current_hp += 50
 			}
 			p.removeInventory("Potions", 1)
-			fmt.Println("- 1 potion, points de vie : ", p.current_hp)
-			fmt.Println("Potions restantes : ", p.inventory["Potions"])
+			blue.Println("- 1 potion, points de vie : ", p.current_hp)
+			blue.Println("Potions restantes : ", p.inventory["Potions"])
 		}
 	}
 }
@@ -151,6 +267,7 @@ func (p *Personnage) takePot() {
 // Fonctions des sous choix du menu principal
 
 func (p *Personnage) accessInvetory() {
+	red := color.New(color.FgRed)
 	fmt.Println("--- Inventaire ---")
 	for objet := range p.inventory {
 		fmt.Println(objet, " : ", p.inventory[objet])
@@ -166,9 +283,20 @@ func (p *Personnage) accessInvetory() {
 		p.accessInvetory()
 	case 2:
 		clearConsole()
-		fmt.Println("Sortie de l'inventaire")
+	default:
+		clearConsole()
+		red.Println("Veuillez saisir une donnée valide")
+		p.accessInvetory()
 	}
 } // inventaire
+
+func (p *Personnage) showSkills() {
+	fmt.Println("--- Abilités ---")
+	for i := 0; i < len(p.skill); i++ {
+		fmt.Println("Sort n°", i+1, " : ", p.skill[i])
+	}
+	fmt.Println("----------------")
+}
 
 func (p *Personnage) displayInfo() {
 	fmt.Println("--- ", p.nom, " ---")
@@ -187,6 +315,8 @@ func (p *Personnage) enoughMoney(cout int) bool {
 }
 
 func (p *Personnage) marchand() {
+	red := color.New(color.FgRed)
+	blue := color.New(color.FgBlue)
 	green := color.New(color.FgGreen)
 	green.Println("Argent :  ", p.inventory["Argent"])
 	fmt.Println("--- Marchand ---")
@@ -200,32 +330,31 @@ func (p *Personnage) marchand() {
 	case 1:
 		p.addInvetory("Potions", 1)
 		clearConsole()
-		fmt.Println("Une potion a été achetée !")
+		blue.Println("Une potion a été achetée !")
 		p.marchand()
 	case 2:
 		p.addInvetory("Potions de poison", 1)
 		clearConsole()
-		fmt.Println("Une potion de poison a été achetée !")
+		blue.Println("Une potion de poison a été achetée !")
 		p.marchand()
 	case 3:
 		if p.enoughMoney(5) {
 			p.addInvetory("Epée", 1)
 			p.removeInventory("Argent", 5)
 			clearConsole()
-			fmt.Println("Une épée a été achetée !")
+			blue.Println("Une épée a été achetée !")
 			p.marchand()
 		} else {
 			clearConsole()
-			fmt.Println("Vous n'avez pas assez d'argent !")
+			red.Println("Vous n'avez pas assez d'argent !")
 			p.marchand()
 		}
 	case 4:
 		clearConsole()
-		fmt.Println("Sortie du marchand...")
 		p.Menu()
 	default:
 		clearConsole()
-		fmt.Println("Veuillez saisir une donnée valide")
+		red.Println("Veuillez saisir une donnée valide")
 	}
 } //marchand
 
