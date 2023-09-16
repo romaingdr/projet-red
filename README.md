@@ -12,6 +12,14 @@ Ce programme est un jeu de rôle textuel simple dans lequel vous créez un perso
 - Affichez les compétences de votre personnage.
 - Interagissez avec le jeu à travers des menus textuels.
 
+## Dernier update
+
+- Création d'une structure Item pour une implémentation plus simple
+- Inventaire : Changement du type map[string]int en type []Item
+- Marchand : Création d'une liste d'item (items_marchand -> []item ) à la vente pour ne pas les écrire un par un
+- Combat : Création du sous menu "[5] Combat - tutoriel"
+
+
 ## Auteur(s)
 
 romaingdr && avvrt
