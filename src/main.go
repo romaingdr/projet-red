@@ -123,6 +123,31 @@ func majString(input string) string {
 }
 
 // Afficher un message lettre par lettre
+func speedMsg(message string, speed int, colorName string) {
+	red := color.New(color.FgRed)
+	blue := color.New(color.FgBlue)
+	green := color.New(color.FgGreen)
+	defaultColor := color.New(color.FgWhite) // Couleur par défaut
+
+	var selectedColor *color.Color
+
+	switch colorName {
+	case "green":
+		selectedColor = green
+	case "red":
+		selectedColor = red
+	case "blue":
+		selectedColor = blue
+	default:
+		selectedColor = defaultColor
+	}
+
+	for _, char := range message {
+		selectedColor.Print(string(char))
+		time.Sleep(time.Duration(speed) * time.Millisecond)
+	}
+}
+
 func affichageMsg(message string) {
 	green := color.New(color.FgGreen)
 	for _, char := range message {
@@ -180,10 +205,6 @@ func inputint() int {
 
 func input() string {
 	scanner := bufio.NewScanner(os.Stdin)
-
-	fmt.Print(">> ")
-
-	// Utilisez Scan() pour lire une ligne de texte
 	scanner.Scan()
 
 	return scanner.Text()
@@ -227,8 +248,11 @@ func (p *Personnage) Menu() {
 		p.Menu()
 	case 5:
 		clearConsole()
-		p.battle()
-		p.Menu()
+		if p.niveau == 1 {
+			p.battleTutorial()
+		} else {
+			p.battle()
+		}
 	case 6:
 		clearConsole()
 		red.Println("Fermeture du jeu...")
@@ -237,6 +261,44 @@ func (p *Personnage) Menu() {
 		red.Println("Veuillez saisir une donnée valide !")
 		p.Menu()
 	}
+}
+
+// Fonctions du tutoriel
+func abilitiesTutorial() string {
+	red := color.New(color.FgRed)
+	fmt.Println("---- Abilités ----")
+	fmt.Println("[1] Coup de poing")
+	fmt.Println("[2] Frénésie sanguinaire")
+	fmt.Println("[3] Lame démoniaque")
+	fmt.Println("------------------")
+	choice := inputint()
+	switch choice {
+	case 1:
+		return "Coup de poing"
+	case 2:
+		return "Frénésie sanguinaire"
+	case 3:
+		return "Lame démoniaque"
+	default:
+		clearConsole()
+		red.Println("Veuillez choisir une option valide")
+		abilitiesTutorial()
+	}
+	return ""
+}
+
+func battleMenuTutorial() {
+	fmt.Println("----- A votre tour -----")
+	fmt.Print("[1] Attaque auto")
+	speedMsg("<-- Ceci vous permet d'attaquer l'adversaire avec votre compétence basique", 20, "white")
+	input()
+	fmt.Print("[2] Abilités")
+	speedMsg("<-- Ceci vous permet d'utiliser une abilité sur l'adversaire", 20, "white")
+	input()
+	fmt.Print("[3] Inventaire")
+	speedMsg("<-- Ceci vous permet de consulter votre inventaire pendant le combat", 20, "white")
+	fmt.Println("")
+	fmt.Println("------------------------")
 }
 
 // Sous fonctions du menu
@@ -328,11 +390,59 @@ func (p *Personnage) marchand() {
 	}
 } //marchand
 
+func (p *Personnage) battleTutorial() {
+	red := color.New(color.FgRed)
+	blue := color.New(color.FgBlue)
+	green := color.New(color.FgGreen)
+	clearConsole()
+	//blue := color.New(color.FgBlue)
+	speedMsg("Bienvenue dans le tutoriel de combat !", 30, "blue")
+	input()
+	clearConsole()
+	red.Print("Ennemi 1 - 100 / 100")
+	speedMsg(" <-- Ici sont affichés les points de vie de l'ennemi", 30, "white")
+	input()
+	green.Print("Vous - 100 / 100")
+	speedMsg(" <-- Et ici les vôtres", 20, "white")
+	input()
+	clearConsole()
+	speedMsg("Le combat se joue en tour par tour", 20, "blue")
+	fmt.Println("")
+	speedMsg("A chaque fois que vous jouez, plusieurs options s'offrent à vous : ", 20, "blue")
+	fmt.Println("")
+	battleMenuTutorial()
+	input()
+	clearConsole()
+	speedMsg("Lors de chaque attaque, vous verrez le nombre de dégats infligés : ", 20, "blue")
+	fmt.Println()
+	green.Print("Vous avez infligé 20 dégats à Ennemi 1")
+	input()
+	clearConsole()
+	speedMsg("Mais vous pouvez également en recevoir : ", 20, "blue")
+	fmt.Println()
+	red.Print("Vous avez reçu 50 dégats (coup critique) de Ennemi 1 !")
+	input()
+	clearConsole()
+	speedMsg("Lors de votre tour, vous pourrez également utiliser vos abilités : ", 20, "blue")
+	fmt.Println("")
+	spell := abilitiesTutorial()
+	speedMsg(spell+" à infligé 50 dégats à Ennemi 1", 20, "green")
+	input()
+	clearConsole()
+	speedMsg("Félicitation, vous êtes prét pour votre premier combat ! Bonne chance", 20, "blue")
+	input()
+	clearConsole()
+	p.niveau = 2
+	blue.Println("Vous avez atteint le niveau 2 !")
+	p.Menu()
+} // Tutoriel de combat
+
 func (p *Personnage) battle() {
+	clearConsole()
 	blue := color.New(color.FgBlue)
 	blue.Println("Prochain update 🤞")
 	p.Menu()
-} //combats
+}
 
 // Interactions avec l'inventaire
 func (p *Personnage) takePot() {
