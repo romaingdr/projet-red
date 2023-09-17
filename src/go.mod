@@ -1,6 +1,6 @@
-module projet-red
+module src
 
-go 1.21.0
+go 1.21.1
 
 require (
 	github.com/fatih/color v1.15.0 // indirect
