@@ -1,7 +1,4 @@
-tour ennemi :
-critique chance
-
-tour joueur:
-toute l'auto
-spells degats a l'ennemi
-tout inventaire
+- Utilisation de l'inventaire dans le tour du joueur
+- Ajout des effets de chaque spell
+- Fix les dégats de l'ennemi / nos dégats parceque impossible a tuer avec un titan / un chasseur niveau 1
+- Fix les items et reéquilibrage complet des améliorations d'ad / hp
