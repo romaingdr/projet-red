@@ -3,7 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/fatih/color"
+	"math/rand"
 	"src/utils"
+	"strconv"
+	"time"
 )
 
 // Fonction main
@@ -15,10 +18,26 @@ func main() {
 }
 
 var (
-	Red   = color.New(color.FgRed)
-	Blue  = color.New(color.FgBlue)
-	Green = color.New(color.FgGreen)
+	Red      = color.New(color.FgRed)
+	Blue     = color.New(color.FgBlue)
+	Green    = color.New(color.FgGreen)
+	Monstres = []Ennemy{{"Red soldier", 200, 200, 20, 50, 20}}
 )
+
+type Ennemy struct {
+	Name           string
+	HpCurrent      int
+	HpMax          int
+	DamagesMin     int
+	DamgesMax      int
+	CriticalChance int
+}
+
+type Spell struct {
+	Name        string
+	Description string
+	Damages     int
+}
 
 // Personnage structure
 type Personnage struct {
@@ -28,13 +47,23 @@ type Personnage struct {
 	currentHp int
 	maxHP     int
 	inventory []Item
-	skill     []string
+	skill     []Spell
 }
 
 // Item structure
 type Item struct {
-	Name  string
-	Price int
+	Name     string
+	Quantite int
+}
+
+// Article structure
+type Article struct {
+	Name        string
+	Price       int
+	Description string
+	Ad          int
+	Health      int
+	Unique      bool
 }
 
 // createCharacter initialise un nouveau personnage.
@@ -47,6 +76,7 @@ func (p *Personnage) createCharacter() {
 	switch choice {
 	case 1:
 		hpMax := 0
+		spells := []Spell{}
 		nom := "0"
 		utils.ClearConsole()
 		print("Nom de votre personnage >> ")
@@ -59,23 +89,42 @@ func (p *Personnage) createCharacter() {
 		}
 		nom = utils.CapitalizeString(nom)
 		utils.ClearConsole()
-		classe := chooseClass()
+		classe := utils.ChooseClass()
 		switch classe {
 		case "Titan":
-			hpMax = 150
+			hpMax = 180
+			spells = []Spell{{"Auto", "Attaque automatique du titan", 10},
+				{"La bulle", "Le titan s'enferme dans une bulle et reduit les dégâts subis", 0},
+				{"Frappe ultime", "Le titan inflige une violente attaque", 50},
+				{"Dé titanesque", "Le titan a 67% de chance d'infliger 400% de dégats, sinon il perd 70 points de vies", 40},
+				{"(%) Critical chance", "inflige le double des dégats", 15}}
 		case "Chasseur":
-			hpMax = 125
+			hpMax = 135
+			spells = []Spell{{"Auto", "Attaque automatique du chasseur", 20},
+				{"Lame Sanglante", "Inflige un coup de lame empoisonnée", 25},
+				{"Maitrise du terrain", "Le chasseur se concentre pour infliger une violente attaque", 0},
+				{"Attaque rapide", "Inflige 200% des dégats de l'attaque automatique", 30},
+				{"(%) Critical chance", "inflige le double des dégats", 10}}
 		case "Arcaniste":
 			hpMax = 100
+			spells = []Spell{{"Auto", "Attaque automatique de l'arcaniste", 30},
+				{"Trou noir", "Execute l'ennemi en dessous de 15% de points de vie", 40},
+				{"Alteration de l'ame", "Vol de vie (150% des dégats infligés)", 15},
+				{"Foudre", "La foudre s'abat sur l'ennemi et lui inflige des dégats", 70},
+				{"(%) Critical chance", "inflige le double des dégats", 10}}
 		}
 		utils.ClearConsole()
-		p.Initialize(nom, classe, 1, hpMax, hpMax, []Item{{"Argent", 100}, {"Potions", 3}}, []string{"Coup de poing"})
+		p.Initialize(nom, classe, 1, hpMax, hpMax, []Item{{"Argent", 10000}, {"Potions", 3}}, spells)
 		utils.SpeedMsg("Bienvenue, "+nom+" ! ", 60, "blue")
 		utils.Input()
 		utils.ClearConsole()
 
 	case 2:
-		p.Initialize("Romain", "Chasseur", 1, 125, 125, []Item{{"Argent", 100}, {"Potions", 3}}, []string{"Coup de poing"})
+		spells := []Spell{{"Auto", "Attaque automatique du champion", 15},
+			{"Lame Sanglante", "Inflige un coup de lame empoisonnée", 25},
+			{"Maitrise du terrain", "Le chasseur se concentre pour infliger une violente attaque", 0},
+			{"Attaque rapide", "Inflige une attaque automatique double", 30}}
+		p.Initialize("Romain", "Chasseur", 2, 125, 125, []Item{{"Argent", 10000}, {"Potions", 3}}, spells)
 		utils.ClearConsole()
 		utils.SpeedMsg("Bienvenue, Romain !", 60, "blue")
 		utils.Input()
@@ -89,8 +138,94 @@ func (p *Personnage) createCharacter() {
 
 }
 
+func (p *Personnage) abilitiesBattle(e *Ennemy) {
+	fmt.Printf("%-20s%-10s%-60s\n", "Nom", "Dégâts", "Description")
+	fmt.Println("------------------------------------------------------------------")
+	for i := 1; i < 4; i++ {
+		fmt.Printf("[%d] %-20s %-10d %-s\n", i, p.skill[i].Name, p.skill[i].Damages, p.skill[i].Description)
+	}
+	fmt.Println("------------------------------------------------------------------")
+	fmt.Println("[4] Sortir")
+	choice, _ := utils.Inputint()
+	switch choice {
+	case 1:
+		degats := p.skill[1].Damages
+		Green.Println("Vous avez infligé " + strconv.Itoa(degats) + " dégats avec " + p.skill[1].Name)
+		e.HpCurrent -= degats
+		utils.Input()
+	case 2:
+		degats := p.skill[2].Damages
+		Green.Println("Vous avez infligé " + strconv.Itoa(degats) + " dégats avec " + p.skill[2].Name)
+		e.HpCurrent -= degats
+		utils.Input()
+	case 3:
+		degats := p.skill[3].Damages
+		Green.Println("Vous avez infligé " + strconv.Itoa(degats) + " dégats avec " + p.skill[3].Name)
+		e.HpCurrent -= degats
+		utils.Input()
+	case 4:
+		utils.ClearConsole()
+		p.playerRound(e)
+	default:
+		utils.ClearConsole()
+		Red.Println("Veuillez saisir une donnée valide !")
+		p.abilitiesBattle(e)
+	}
+}
+
+func (p *Personnage) playerRound(e *Ennemy) {
+	Red.Println(e.Name + " - " + strconv.Itoa(e.HpCurrent) + "/" + strconv.Itoa(e.HpMax))
+	Green.Println(p.nom + " - " + strconv.Itoa(p.currentHp) + "/" + strconv.Itoa(p.maxHP))
+	fmt.Println("----- A votre tour -----")
+	fmt.Println("[1] Attaque auto")
+	fmt.Println("[2] Abilités")
+	fmt.Println("[3] Inventaire")
+	fmt.Println("------------------------")
+	choice, _ := utils.Inputint()
+	switch choice {
+	case 1:
+		utils.ClearConsole()
+		fmt.Println("Auto")
+		p.playerRound(e)
+	case 2:
+		utils.ClearConsole()
+		p.abilitiesBattle(e)
+	case 3:
+		utils.ClearConsole()
+		fmt.Println("Inventaire")
+		p.playerRound(e)
+	default:
+		utils.ClearConsole()
+		Red.Println("Veuillez saisir une donnée valide")
+		p.playerRound(e)
+	}
+
+}
+
+func (p *Personnage) ennemyRound(e *Ennemy) {
+	rand.Seed(time.Now().UnixNano())
+	Red.Println(e.Name + " - " + strconv.Itoa(e.HpCurrent) + "/" + strconv.Itoa(e.HpMax))
+	Green.Println(p.nom + " - " + strconv.Itoa(p.currentHp) + "/" + strconv.Itoa(p.maxHP))
+	fmt.Println("----- Tour de " + e.Name + " -----")
+	utils.SpeedMsg(e.Name+" attaque...\n", 20, "default")
+	degats := rand.Intn(e.DamgesMax-e.DamagesMin+1) + e.DamagesMin
+	critic := rand.Intn(2)
+	if critic == 1 {
+		degats *= 2
+	}
+	time.Sleep(2 * time.Second)
+	p.currentHp -= degats
+	if critic == 1 {
+		Red.Println("[COUP CRITIQUE] Vous avez reçu " + strconv.Itoa(degats) + "dégats")
+	} else {
+		Red.Println("Vous avez reçu " + strconv.Itoa(degats) + "dégats")
+	}
+	fmt.Println("---------------------------------")
+	utils.Input()
+}
+
 // Initialize initialise les données du personnage.
-func (p *Personnage) Initialize(nom string, classe string, niveau int, hp int, hpMax int, inventaire []Item, skill []string) {
+func (p *Personnage) Initialize(nom string, classe string, niveau int, hp int, hpMax int, inventaire []Item, skill []Spell) {
 	p.nom = nom
 	p.classe = classe
 	p.niveau = niveau
@@ -98,36 +233,6 @@ func (p *Personnage) Initialize(nom string, classe string, niveau int, hp int, h
 	p.maxHP = hpMax
 	p.inventory = inventaire
 	p.skill = skill
-}
-
-// choixClasse affiche les classes disponibles et permet à l'utilisateur de choisir une classe.
-func chooseClass() string {
-	utils.ClearConsole()
-
-	Green.Println("Nom du personnage validé !")
-	Blue.Println("Choisissez votre classe : ")
-	classes := []string{"Titan", "Arcaniste", "Chasseur"}
-	println("")
-	println("[1] Titan : a_completer")
-	println("[2] Arcaniste : a_completer")
-	println("[3] Chasseur : a_completer")
-	println("")
-
-	for {
-		choice, _ := utils.Inputint()
-		if choice > 0 && choice < 4 {
-			return classes[choice-1]
-		} else {
-			utils.ClearConsole()
-			Red.Println("Veuillez saisir une option valide")
-			Blue.Println("Choisissez votre classe : ")
-			println("")
-			println("[1] Titan : a_completer")
-			println("[2] Arcaniste : a_completer")
-			println("[3] Chasseur : a_completer")
-			println("")
-		}
-	}
 }
 
 // Menu affiche le menu principal du jeu.
@@ -183,44 +288,6 @@ func (p *Personnage) Menu() {
 	}
 }
 
-// abilitiesTutorial affiche les abilités disponibles dans le tutoriel de combat et permet à l'utilisateur d'en choisir une.
-func abilitiesTutorial() string {
-
-	fmt.Println("---- Abilités ----")
-	fmt.Println("[1] Coup de poing")
-	fmt.Println("[2] Frénésie sanguinaire")
-	fmt.Println("[3] Lame démoniaque")
-	fmt.Println("------------------")
-	choice, _ := utils.Inputint()
-	switch choice {
-	case 1:
-		return "Coup de poing"
-	case 2:
-		return "Frénésie sanguinaire"
-	case 3:
-		return "Lame démoniaque"
-	default:
-		utils.ClearConsole()
-		Red.Println("Veuillez choisir une option valide")
-		return abilitiesTutorial()
-	}
-}
-
-// battleMenuTutorial affiche le menu du tutoriel de combat.
-func battleMenuTutorial() {
-	fmt.Println("----- A votre tour -----")
-	fmt.Print("[1] Attaque auto")
-	utils.SpeedMsg("<-- Ceci vous permet d'attaquer l'adversaire avec votre compétence basique", 20, "white")
-	utils.Input()
-	fmt.Print("[2] Abilités")
-	utils.SpeedMsg("<-- Ceci vous permet d'utiliser une abilité sur l'adversaire", 20, "white")
-	utils.Input()
-	fmt.Print("[3] Inventaire")
-	utils.SpeedMsg("<-- Ceci vous permet de consulter votre inventaire pendant le combat", 20, "white")
-	fmt.Println("")
-	fmt.Println("------------------------")
-}
-
 // battleTutorial est le tutoriel de combat.
 func (p *Personnage) battleTutorial() {
 
@@ -239,7 +306,7 @@ func (p *Personnage) battleTutorial() {
 	fmt.Println("")
 	utils.SpeedMsg("A chaque fois que vous jouez, plusieurs options s'offrent à vous : ", 20, "blue")
 	fmt.Println("")
-	battleMenuTutorial()
+	utils.BattleMenuTutorial()
 	utils.Input()
 	utils.ClearConsole()
 	utils.SpeedMsg("Lors de chaque attaque, vous verrez le nombre de dégats infligés : ", 20, "blue")
@@ -254,7 +321,7 @@ func (p *Personnage) battleTutorial() {
 	utils.ClearConsole()
 	utils.SpeedMsg("Lors de votre tour, vous pourrez également utiliser vos abilités : ", 20, "blue")
 	fmt.Println("")
-	spell := abilitiesTutorial()
+	spell := utils.AbilitiesTutorial()
 	utils.SpeedMsg(spell+" à infligé 50 dégats à Ennemi 1", 20, "green")
 	utils.Input()
 	utils.ClearConsole()
@@ -266,12 +333,37 @@ func (p *Personnage) battleTutorial() {
 	p.Menu()
 }
 
-// battle est la fonction de combat (non implémentée).
+func (p *Personnage) isDead(e *Ennemy) bool {
+	if p.currentHp <= 0 || e.HpCurrent <= 0 {
+		return true
+	} else {
+		return false
+	}
+}
+
+// battle est la fonction de combat
 func (p *Personnage) battle() {
 	utils.ClearConsole()
 
-	Blue.Println("Prochain update 🤞")
-	p.Menu()
+	ennemi1 := Monstres[p.niveau-2]
+	utils.SpeedMsg(p.nom+" VS "+ennemi1.Name+"\n", 20, "red")
+	fmt.Println("-----------------------------")
+	utils.SpeedMsg("Statistiques de l'ennemi : \n", 20, "default")
+	fmt.Println("Points de vie : " + strconv.Itoa(ennemi1.HpMax))
+	fmt.Println("Dégats : " + strconv.Itoa(ennemi1.DamagesMin) + " - " + strconv.Itoa(ennemi1.DamgesMax))
+	fmt.Println("Chance de coup critique : " + strconv.Itoa(ennemi1.CriticalChance))
+	fmt.Println("-----------------------------")
+	utils.SpeedMsg("Bonne chance combattant !", 20, "green")
+	utils.Input()
+	utils.ClearConsole()
+	for !(p.isDead(&ennemi1)) {
+		p.ennemyRound(&ennemi1)
+		utils.ClearConsole()
+		if !(p.isDead(&ennemi1)) {
+			p.playerRound(&ennemi1)
+			utils.ClearConsole()
+		}
+	}
 }
 
 // accessInventory permet au joueur d'accéder à son inventaire.
@@ -281,7 +373,7 @@ func (p *Personnage) accessInventory() {
 	fmt.Println("---------------------------")
 	for _, item := range p.inventory {
 		// Utilisation de fmt.Printf pour aligner les colonnes
-		fmt.Printf("%-20s %-7d\n", item.Name, item.Price)
+		fmt.Printf("%-20s %-7d\n", item.Name, item.Quantite)
 	}
 	fmt.Println("---------------------------")
 	fmt.Println("[1] Utiliser une potion")
@@ -303,11 +395,13 @@ func (p *Personnage) accessInventory() {
 
 // showSkills affiche les abilités du personnage.
 func (p *Personnage) showSkills() {
-	fmt.Println("--- Abilités ---")
-	for i := 0; i < len(p.skill); i++ {
-		fmt.Println("Sort n°", i+1, " : ", p.skill[i])
+	fmt.Printf("%-20s%-10s%-60s\n", "Nom", "Dégâts", "Description")
+	fmt.Println("------------------------------------------------------------------")
+
+	for _, spell := range p.skill {
+		fmt.Printf("%-20s%-10d%-60s\n", spell.Name, spell.Damages, spell.Description)
 	}
-	fmt.Println("----------------")
+	fmt.Println("-------------------------------------------------------------------------------------------")
 }
 
 // displayInfo affiche les informations du personnage.
@@ -319,34 +413,56 @@ func (p *Personnage) displayInfo() {
 	fmt.Println("--------------")
 }
 
+// Fonction pour vérifier si un item avec un nom donné se trouve dans une liste d'items
+func (p *Personnage) alreadyBuy(itemName string) bool {
+	for _, item := range p.inventory {
+		if item.Name == itemName {
+			return true
+		}
+	}
+	return false
+}
+
 // Marchand permet au joueur d'interagir avec le marchand.
 func (p *Personnage) Marchand() {
-
-	var itemMarchand = []Item{
-		{"Potions", 0},
-		{"Potions de poison", 0},
-		{"Epée", 5},
-		{"Casque en fer", 20},
+	var itemMarchand = []Article{
+		{"Potions", 10, "Potion pour récupèrer 40 points de vie", 0, 0, false},
+		{"Guinzoo", 100, "+20% hp | +15 ad", 15, p.maxHP / 5, true},
+		{"Masque grenouille", 1000, "+600% hp", 0, p.maxHP * 6, true},
+		{"Avrilvert", 350, "+100% ad", p.skill[0].Damages, 0, true},
+		{"Rook", 450, "+80% hp", 0, p.maxHP * 80 / 100, true},
+		{"Anneau de gel", 500, "+60%hp | +20 ad ", 20, p.maxHP * 60 / 100, true},
 	}
 
 	for {
 		Green.Println("Argent :  ", p.nbItem("Argent"))
-		fmt.Println("    Article             Prix")
-		fmt.Println("---------------------------")
+		fmt.Println("    Article             Prix                Description")
+		fmt.Println("-----------------------------------------------------")
 		for i, item := range itemMarchand {
-			// Utilisation de fmt.Printf pour aligner les colonnes
-			fmt.Printf("[%d] %-20s %-7d\n", i+1, item.Name, item.Price)
+			if p.alreadyBuy(item.Name) && item.Unique == true {
+				Blue.Printf("%s - acheté !\n", item.Name)
+			} else {
+				fmt.Printf("[%d] %-20s %-7d %-s\n", i+1, item.Name, item.Price, item.Description)
+			}
 		}
-		fmt.Println("---------------------------")
+		fmt.Println("-----------------------------------------------------")
 		fmt.Printf("[%d] Sortir \n", len(itemMarchand)+1)
 		choice, _ := utils.Inputint()
 		if choice > 0 && choice <= len(itemMarchand) {
 			selectedItem := itemMarchand[choice-1]
 			if p.enoughMoney(selectedItem.Price) {
-				p.addInventory(selectedItem.Name, 1)
-				p.inventory[p.findIndex("Argent")].Price -= selectedItem.Price
-				utils.ClearConsole()
-				Blue.Printf("Vous avez acheté : %s pour %d coro !\n", selectedItem.Name, selectedItem.Price)
+				if !(p.alreadyBuy(selectedItem.Name)) {
+					p.addInventory(selectedItem.Name, 1)
+					p.inventory[p.findIndex("Argent")].Quantite -= selectedItem.Price
+					utils.ClearConsole()
+					p.skill[0].Damages += selectedItem.Ad
+					p.maxHP += selectedItem.Health
+					p.currentHp += selectedItem.Health
+					Blue.Printf("Vous avez acheté : %s pour %d coro !\n", selectedItem.Name, selectedItem.Price)
+				} else {
+					utils.ClearConsole()
+					Red.Println("Vous avez déjà acheté cet item")
+				}
 			} else {
 				utils.ClearConsole()
 				Red.Println("Vous n'avez pas assez d'argent !")
@@ -395,11 +511,11 @@ func (p *Personnage) enoughMoney(cost int) bool {
 func (p *Personnage) addInventory(itemName string, quantity int) {
 	for i, item := range p.inventory {
 		if item.Name == itemName {
-			p.inventory[i].Price += quantity
+			p.inventory[i].Quantite += quantity
 			return
 		}
 	}
-	newItem := Item{Name: itemName, Price: quantity}
+	newItem := Item{Name: itemName, Quantite: quantity}
 	p.inventory = append(p.inventory, newItem)
 }
 
@@ -408,12 +524,12 @@ func (p *Personnage) removeInventory(itemName string, quantity int) {
 	for i, item := range p.inventory {
 		if item.Name == itemName {
 			// L'élément existe dans la liste.
-			if item.Price <= quantity {
+			if item.Quantite <= quantity {
 				// Retire complètement l'élément si la quantité est suffisante.
 				p.inventory = append(p.inventory[:i], p.inventory[i+1:]...)
 			} else {
 				// Met à jour la quantité de l'élément si la quantité est insuffisante.
-				p.inventory[i].Price -= quantity
+				p.inventory[i].Quantite -= quantity
 			}
 		}
 	}
@@ -423,7 +539,7 @@ func (p *Personnage) removeInventory(itemName string, quantity int) {
 func (p *Personnage) nbItem(itemName string) int {
 	for _, item := range p.inventory {
 		if item.Name == itemName {
-			return item.Price
+			return item.Quantite
 		}
 	}
 	return -1

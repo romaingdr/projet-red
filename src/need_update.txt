@@ -1,0 +1,7 @@
+tour ennemi :
+critique chance
+
+tour joueur:
+toute l'auto
+spells degats a l'ennemi
+tout inventaire
