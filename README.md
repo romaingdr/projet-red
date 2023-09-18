@@ -14,12 +14,12 @@ Ce programme est un jeu de rôle textuel simple dans lequel vous créez un perso
 
 ## Dernier update
 
-- Création d'une structure Item pour une implémentation plus simple
-- Inventaire : Changement du type map[string]int en type []Item
-- Marchand : Création d'une liste d'item (items_marchand -> []item ) à la vente pour ne pas les écrire un par un
-- Tutoriel : Ajout du tutoriel complet de combat + passage niveau 2 pour le vrai combat
-- Marchand / Inventaire : Changement de l'affichage (+ clair)
-- Créations du package "utils" pour importer certaines fonctions
+- 3 spells pour chaque classe + auto + chance de crit
+- Statistiques du persos : ad / hp / critChance
+- Items : amélioration de l'ad et des hp
+- Premier combat : totalement fonctionnel + passe niveau 3
+- Limitation du nombre de spells utilisables par round
+- Full commentaires du code pour une plus claire compréhension
 
 ## Auteur(s)
 
