@@ -1,0 +1,12 @@
+Items :
+
+potions : 50coro ,40 hp
+Guinzoo : 150 coro, 20% hp  15 dmg
+Masque Grenouille : 1000coro, 600% hp
+Avrilvert : 350coro ,100% dmg
+Rook : 450coro, 200 hp
+Anneau de Gel : 500coro, 100 hp 30dmg 
+
+artifacts :
+Pacte Cruel : dmg infliges x2, dmg taken x2
+As de pique : crit chance 100%, -30 hp par tour

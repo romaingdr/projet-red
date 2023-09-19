@@ -1,0 +1,2 @@
+- Fix items
+- Fix spells

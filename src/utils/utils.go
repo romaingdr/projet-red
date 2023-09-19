@@ -87,44 +87,6 @@ func SpeedMsg(message string, speed int, colorName string) {
 	}
 }
 
-// abilitiesTutorial affiche les abilités disponibles dans le tutoriel de combat et permet à l'utilisateur d'en choisir une.
-func AbilitiesTutorial() string {
-
-	fmt.Println("---- Abilités ----")
-	fmt.Println("[1] Coup de poing")
-	fmt.Println("[2] Frénésie sanguinaire")
-	fmt.Println("[3] Lame démoniaque")
-	fmt.Println("------------------")
-	choice, _ := Inputint()
-	switch choice {
-	case 1:
-		return "Coup de poing"
-	case 2:
-		return "Frénésie sanguinaire"
-	case 3:
-		return "Lame démoniaque"
-	default:
-		ClearConsole()
-		Red.Println("Veuillez choisir une option valide")
-		return AbilitiesTutorial()
-	}
-}
-
-// battleMenuTutorial affiche le menu du tutoriel de combat.
-func BattleMenuTutorial() {
-	fmt.Println("----- A votre tour -----")
-	fmt.Print("[1] Attaque auto")
-	SpeedMsg("<-- Ceci vous permet d'attaquer l'adversaire avec votre compétence basique", 20, "white")
-	Input()
-	fmt.Print("[2] Abilités")
-	SpeedMsg("<-- Ceci vous permet d'utiliser une abilité sur l'adversaire", 20, "white")
-	Input()
-	fmt.Print("[3] Inventaire")
-	SpeedMsg("<-- Ceci vous permet de consulter votre inventaire pendant le combat", 20, "white")
-	fmt.Println("")
-	fmt.Println("------------------------")
-}
-
 // choixClasse affiche les classes disponibles et permet à l'utilisateur de choisir une classe.
 func ChooseClass() string {
 	ClearConsole()
