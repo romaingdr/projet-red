@@ -17,7 +17,16 @@ func (p *Personnage) Menu() {
 	if p.niveau == 1 {
 		fmt.Println("[5] Combat - tutoriel")
 	} else {
-		fmt.Println("[5] Combat")
+		if p.niveau < 8 {
+			if p.ennemi == 2 {
+				fmt.Print("[5] Combat")
+				Red.Println(" - Boss")
+			} else {
+				fmt.Println("[5] Combat")
+			}
+		} else {
+			fmt.Println("[5] fin ?")
+		}
 	}
 	fmt.Println("[6] Quitter le jeu")
 	fmt.Println("----------------")
@@ -169,8 +178,11 @@ func (p *Personnage) Marchand() {
 					p.inventory[p.findIndex("Argent")].Quantite -= selectedItem.Price // On retire l'argent de l'inventaire
 					ClearConsole()
 					p.skill[0].Damages += selectedItem.Ad // On ajoute les dégats que donne l'item
-					p.maxHP += selectedItem.Health        // On ajoute la vie que donne l'item sur les hp max
-					p.currentHp += selectedItem.Health    // On ajoute la vie que donne l'item sur les hp actuels
+					if p.classe == "Chasseur" {           // On configure l'attaque rapide du chasseur
+						p.skill[3].Damages = p.skill[0].Damages * 2
+					}
+					p.maxHP += selectedItem.Health     // On ajoute la vie que donne l'item sur les hp max
+					p.currentHp += selectedItem.Health // On ajoute la vie que donne l'item sur les hp actuels
 					Blue.Printf("Vous avez acheté : %s pour %d coro !\n", selectedItem.Name, selectedItem.Price)
 				} else { // Item déjà acheté
 					ClearConsole()

@@ -6,7 +6,6 @@ import (
 
 // createCharacter initialise un nouveau personnage.
 func (p *Personnage) CreateCharacter() {
-
 	// Affichage des choix
 	fmt.Println("---- Création du personnage ----")
 	fmt.Println("[1] Créer un personnage")
@@ -36,27 +35,27 @@ func (p *Personnage) CreateCharacter() {
 		case "Titan":
 			hpMax = 180
 			spells = []Spell{{"Auto", "Attaque automatique du titan", 10, -1, -1},
-				{"La bulle", "Le titan s'enferme dans une bulle et reduit les dégâts subis", 0, 5, 5},
+				{"La bulle", "Réduit de 65% la prochaine attaque et gagne 10% de chance de coup critique", 0, 5, 5},
 				{"Frappe ultime", "Le titan inflige une violente attaque", 50, 3, 3},
-				{"Dé titanesque", "Le titan a 67% de chance d'infliger 400% de dégats, sinon il perd 70 points de vies", 40, 100, 100},
-				{"(%) Critical chance", "inflige le double des dégats", 15, -1, -1}}
+				{"Dé titanesque", "Le titan a 67% de chance d'infliger 400% de dégats, sinon il perd 70 points de vies", 30, 100, 100},
+				{"(%) Critical chance", "Chance d'obtenir un coup critique (inflige le double des dégats)", 15, -1, -1}}
 		case "Chasseur":
 			hpMax = 135
 			spells = []Spell{{"Auto", "Attaque automatique du chasseur", 20, -1, -1},
-				{"Lame Sanglante", "Inflige un coup de lame empoisonnée", 25, 3, 3},
-				{"Maitrise du terrain", "Le chasseur se concentre pour infliger une violente attaque", 0, 100, 100},
-				{"Attaque rapide", "Inflige 200% des dégats de l'attaque automatique", 30, 3, 3},
-				{"(%) Critical chance", "inflige le double des dégats", 10, -1, -1}}
+				{"Lame Sanglante", "Inflige un poison de 10 dégats par tour pendant 3 tours", 25, 3, 3},
+				{"Maitrise du terrain", "Réduit de 50% la prochaine attaque | + 20% de dégats d'attaque automatique", 0, 100, 100},
+				{"Attaque rapide", "Inflige 200% des dégats de l'attaque automatique", 40, 3, 3},
+				{"(%) Critical chance", "Chance d'obtenir un coup critique (inflige le double des dégats)", 10, -1, -1}}
 		case "Arcaniste":
 			hpMax = 100
 			spells = []Spell{{"Auto", "Attaque automatique de l'arcaniste", 30, -1, -1},
 				{"Trou noir", "Execute l'ennemi en dessous de 15% de points de vie", 40, 3, 3},
-				{"Alteration de l'ame", "Vol de vie (150% des dégats infligés)", 15, 100, 100},
-				{"Foudre", "La foudre s'abat sur l'ennemi et lui inflige des dégats", 70, 2, 2},
-				{"(%) Critical chance", "inflige le double des dégats", 10, -1, -1}}
+				{"Alteration de l'ame", "Vol les dégats infligés et les transforment en point de vie", 15, 100, 100},
+				{"Foudre", "Améliore les dégâts de l'altération de l'âme de 50%", 70, 2, 2},
+				{"(%) Critical chance", "Chance d'obtenir un coup critique (inflige le double des dégats)", 10, -1, -1}}
 		}
 		ClearConsole()
-		p.Initialize(nom, classe, 2, hpMax, hpMax, []Item{{"Argent", 10000}, {"Potions", 3}}, spells)
+		p.Initialize(nom, classe, 2, hpMax, hpMax, []Item{{"Argent", 300}, {"Potions", 3}}, spells)
 		SpeedMsg("Bienvenue, "+nom+" ! \n", 60, "blue")
 		fmt.Println()
 		fmt.Print("Appuyez pour entrer dans la partie")
@@ -65,15 +64,15 @@ func (p *Personnage) CreateCharacter() {
 
 	// Personnage par défaut (nom: Romain + classe: Chasseur)
 	case 2:
-		spells := []Spell{{"Auto", "Attaque automatique du champion", 15, -1, -1},
-			{"Lame Sanglante", "Inflige un coup de lame empoisonnée", 25, 3, 3},
-			{"Maitrise du terrain", "Le chasseur se concentre pour infliger une violente attaque", 0, 2, 2},
-			{"Attaque rapide", "Inflige une attaque automatique double", 30, 1, 1},
-			{"(%) Critical chance", "inflige le double des dégats", 10, -1, -1}}
+		spells := []Spell{{"Auto", "Attaque automatique du chasseur", 10000, -1, -1},
+			{"Lame Sanglante", "Inflige un poison de 10 dégats par tour pendant 3 tours", 25, 3, 3},
+			{"Maitrise du terrain", "Réduit de 50% la prochaine attaque | + 20% de dégats d'attaque automatique", 0, 100, 100},
+			{"Attaque rapide", "Inflige 200% des dégats de l'attaque automatique", 40, 3, 3},
+			{"(%) Critical chance", "Chance d'obtenir un coup critique (inflige le double des dégats)", 10, -1, -1}}
 
-		p.Initialize("Romain", "Chasseur", 2, 125, 125, []Item{{"Argent", 10000}, {"Potions", 3}}, spells)
+		p.Initialize("GodMod", "Chasseur", 8, 10000, 10000, []Item{{"Argent", 10000}, {"Potions", 999}}, spells)
 		ClearConsole()
-		SpeedMsg("Bienvenue, Romain !\n", 60, "blue")
+		SpeedMsg("Compte de test | GodMod !\n", 60, "blue")
 		fmt.Println()
 		fmt.Print("Appuyez pour entrer dans la partie")
 		Input()

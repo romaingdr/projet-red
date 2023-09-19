@@ -1,2 +1,3 @@
-- Fix items
-- Fix spells
+- Equilibrage general
+- Lore entre les combats
+- Graphisme ascii

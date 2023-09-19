@@ -2,6 +2,7 @@ Titan:
 
 Auto - 10
 1 - La bulle      | 0 dégats  | 5 utilisations | 65% damages reduces
+					       | 10% crit
 2 - Frappe ultime | 50 dégats | 3 utilisations
 3 - Dé titanesque | 40 dégats | 100 utilisations | 67% => 400% damages
 						   33% => -70hp

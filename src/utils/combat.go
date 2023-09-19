@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"math/rand"
+	"os"
 	"strconv"
 	"time"
 )
@@ -40,13 +41,13 @@ var (
 		{
 			{"The key master 1", 1300, 1300, 20, 50, 80, false},
 			{"The key master 2", 1300, 1300, 20, 50, 80, false},
-			{"The general", 1700, 900, 20, 50, 80, true},
+			{"The general", 1700, 1700, 20, 50, 80, true},
 		},
 
 		{
-			{"Alien 1", 700, 700, 20, 50, 70, false},
-			{"Alien 2", 700, 700, 20, 50, 70, false},
-			{"Fallen garden", 2500, 2500, 20, 50, 100, true},
+			{"Alien 1", 700, 700, 60, 120, 70, false},
+			{"Alien 2", 700, 700, 60, 120, 70, false},
+			{"Fallen garden", 2500, 2500, 60, 120, 100, true},
 		},
 	}
 )
@@ -54,10 +55,23 @@ var (
 // battle est la fonction de combat
 func (p *Personnage) battle() {
 	ClearConsole()
+	if p.niveau == 8 { // LE JEU EST TERMINE
+		SpeedMsg("Félicitation "+p.nom+"\n", 30, "blue")
+		time.Sleep(2 * time.Second)
+		SpeedMsg("Vous avez battu tout les ennemis\n", 20, "blue")
+		time.Sleep(1 * time.Second)
+		SpeedMsg("Merci d'avoir joué à notre jeu !\n", 20, "blue")
+		time.Sleep(1 * time.Second)
+		SpeedMsg("En esperant vous revoir bientôt !", 30, "blue")
+		Input()
+		os.Exit(0)
+	}
 	// Sauvegarde des spells qui changent
 
 	actualAuto := p.skill[0].Damages
+	actualCrit := p.skill[4].Damages
 	spell2 := p.skill[2].Damages
+	spell3 := p.skill[3].Damages
 
 	// Configuration de l'ennemi
 	ennemi1 := Monstres[p.niveau-2][p.ennemi]
@@ -137,6 +151,12 @@ func (p *Personnage) battle() {
 		for i := 1; i < 4; i++ {
 			p.skill[i].StillUse = p.skill[i].MaxUse
 		}
+		// Ré-attribution des dégats a l'auto
+		p.skill[0].Damages = actualAuto
+		p.skill[2].Damages = spell2
+		p.skill[3].Damages = spell3
+		p.skill[4].Damages = actualCrit
+		ClearConsole()
 		p.Menu()
 	} else {
 		// Défaite du joueur
@@ -165,6 +185,8 @@ func (p *Personnage) battle() {
 		// Réèattribution des dégats a l'auto
 		p.skill[0].Damages = actualAuto
 		p.skill[2].Damages = spell2
+		p.skill[3].Damages = spell3
+		p.skill[4].Damages = actualCrit
 		ClearConsole()
 		p.Menu()
 	}
@@ -262,6 +284,8 @@ func (p *Personnage) abilitiesBattle(e *Ennemy) {
 			} else if p.classe == "Titan" { // Réduction des dégats
 				damage_reduce = 65
 				Green.Println("[BULLE] Vous obtenez 65% de réductions des dégats pour le prochain tour")
+				p.skill[4].Damages += 10
+				Green.Println("[BULLE] Vous obtenez 10% de chance de coup critique")
 			}
 
 		} else if choice == 2 {
@@ -270,7 +294,7 @@ func (p *Personnage) abilitiesBattle(e *Ennemy) {
 				p.currentHp += degats
 				Green.Println("[VOL DE VIE] Vous récuperez " + strconv.Itoa(degats) + " points de vie")
 
-			} else if p.classe == "Chasseur" { // Damage reduce (pas complété) + Auto stack
+			} else if p.classe == "Chasseur" { // Damage reduce  + 20% auto
 				damage_reduce = 50
 				Green.Println("[MAITRISE DU TERRAIN] Vous obtenez 50% de réduction des dégats pour le prochain tour")
 				p.skill[0].Damages += p.skill[0].Damages / 5
@@ -297,7 +321,7 @@ func (p *Personnage) abilitiesBattle(e *Ennemy) {
 			}
 		}
 		if poison > 0 {
-			e.HpCurrent -= 1
+			e.HpCurrent -= 10
 			Green.Println("[POISON] Vous infligez 10 dégats supplémentaires")
 			poison--
 		}
@@ -310,6 +334,10 @@ func (p *Personnage) abilitiesBattle(e *Ennemy) {
 
 // playerRound configure le round côté joueur
 func (p *Personnage) playerRound(e *Ennemy) {
+	// Confiuration de l'attaque rapide du chasseur
+	if p.classe == "Chasseur" {
+		p.skill[3].Damages = p.skill[0].Damages * 2
+	}
 
 	// Affichage du menu lors du tour du joueur
 	Red.Println(e.Name + " - " + strconv.Itoa(e.HpCurrent) + "/" + strconv.Itoa(e.HpMax))
@@ -350,7 +378,7 @@ func (p *Personnage) playerRound(e *Ennemy) {
 			e.HpCurrent -= degats
 		}
 		if poison > 0 {
-			e.HpCurrent -= 1
+			e.HpCurrent -= 10
 			Green.Println("[POISON] Vous infligez 10 dégats supplémentaires")
 			poison--
 		}
