@@ -1,0 +1,4 @@
+- Utilisation de l'inventaire dans le tour du joueur
+
+- Fix les dégats de l'ennemi / nos dégats parceque impossible a tuer avec un titan / un chasseur niveau 1
+- Fix les items et reéquilibrage complet des améliorations d'ad / hp

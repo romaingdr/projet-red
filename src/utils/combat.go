@@ -317,6 +317,7 @@ func (p *Personnage) playerRound(e *Ennemy) {
 	fmt.Println("----- A votre tour -----")
 	fmt.Println("[1] Attaque auto")
 	fmt.Println("[2] Abilités")
+
 	fmt.Println("------------------------")
 	choice, _ := Inputint()
 
@@ -387,6 +388,7 @@ func (p *Personnage) ennemyRound(e *Ennemy) {
 	}
 	time.Sleep(2 * time.Second)
 	degats = int(float64(degats) * (1 - float64(damage_reduce)/100))
+
 	p.currentHp -= degats
 	if critic == 1 {
 		Red.Println("[COUP CRITIQUE] Vous avez reçu " + strconv.Itoa(degats) + " dégats")
