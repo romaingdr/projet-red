@@ -1,0 +1,25 @@
+Titan:
+
+Auto - 10
+1 - La bulle      | 0 dégats  | 5 utilisations | 65% damages reduces
+2 - Frappe ultime | 50 dégats | 3 utilisations
+3 - Dé titanesque | 40 dégats | 100 utilisations | 67% => 400% damages
+						   33% => -70hp
+Crit - 15%
+
+Chasseur:
+
+Auto - 20
+1 - Lame Sanglante       | 25 dégats | 3 utilisations | Poison 10 dégats
+2 - Maitrise du terrrain | 0 dégats  | 1OO utilisations | 50% dmg reduce
+                                                        | +20% dmg auto
+3 - Attaque rapide       | 30 dégats | 3 utilisations
+Crit - 10%
+
+Arcaniste:
+
+Auto - 30
+1 - Trou noir	        | 40 dégats | 3 utilisations | Execute < 15%
+2 - Altération de l'ame | 15 dégats | 100 utilisations | +vie = degats 
+3 - Foudre              | 70 dégats | 2 utilisations | +50 dmg adl
+Crit - 10%

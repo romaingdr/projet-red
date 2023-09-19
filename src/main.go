@@ -20,13 +20,19 @@ func main() {
 
 // Variables gloables pour le jeu
 var (
+	damage_reduce = 0
+
 	// Couleurs
 	Red   = color.New(color.FgRed)
 	Blue  = color.New(color.FgBlue)
 	Green = color.New(color.FgGreen)
 
 	// Listes des ennemis rencontrés durant le jeu
-	Monstres = []Ennemy{{"Red soldier", 200, 200, 20, 50, 20}}
+	Monstres = [][]Ennemy{
+		{
+			{"Red soldier", 10, 200, 20, 50, 20, false},
+			{"Red soldier", 10, 200, 20, 50, 20, false},
+			{"Red soldier", 10, 200, 20, 50, 20, true}}}
 )
 
 // Ennemy Structure
@@ -37,6 +43,7 @@ type Ennemy struct {
 	DamagesMin     int
 	DamgesMax      int
 	CriticalChance int
+	IsBoss         bool
 }
 
 // Spell Structure
@@ -53,6 +60,7 @@ type Personnage struct {
 	nom       string
 	classe    string
 	niveau    int
+	ennemi    int
 	currentHp int
 	maxHP     int
 	inventory []Item
@@ -107,28 +115,30 @@ func (p *Personnage) createCharacter() {
 		case "Titan":
 			hpMax = 180
 			spells = []Spell{{"Auto", "Attaque automatique du titan", 10, -1, -1},
-				{"La bulle", "Le titan s'enferme dans une bulle et reduit les dégâts subis", 0, 3, 3},
-				{"Frappe ultime", "Le titan inflige une violente attaque", 50, 2, 2},
-				{"Dé titanesque", "Le titan a 67% de chance d'infliger 400% de dégats, sinon il perd 70 points de vies", 40, 1, 1},
+				{"La bulle", "Le titan s'enferme dans une bulle et reduit les dégâts subis", 0, 5, 5},
+				{"Frappe ultime", "Le titan inflige une violente attaque", 50, 3, 3},
+				{"Dé titanesque", "Le titan a 67% de chance d'infliger 400% de dégats, sinon il perd 70 points de vies", 40, 100, 100},
 				{"(%) Critical chance", "inflige le double des dégats", 15, -1, -1}}
 		case "Chasseur":
 			hpMax = 135
 			spells = []Spell{{"Auto", "Attaque automatique du chasseur", 20, -1, -1},
 				{"Lame Sanglante", "Inflige un coup de lame empoisonnée", 25, 3, 3},
-				{"Maitrise du terrain", "Le chasseur se concentre pour infliger une violente attaque", 0, 2, 2},
-				{"Attaque rapide", "Inflige 200% des dégats de l'attaque automatique", 30, 1, 1},
+				{"Maitrise du terrain", "Le chasseur se concentre pour infliger une violente attaque", 0, 100, 100},
+				{"Attaque rapide", "Inflige 200% des dégats de l'attaque automatique", 30, 3, 3},
 				{"(%) Critical chance", "inflige le double des dégats", 10, -1, -1}}
 		case "Arcaniste":
 			hpMax = 100
 			spells = []Spell{{"Auto", "Attaque automatique de l'arcaniste", 30, -1, -1},
 				{"Trou noir", "Execute l'ennemi en dessous de 15% de points de vie", 40, 3, 3},
-				{"Alteration de l'ame", "Vol de vie (150% des dégats infligés)", 15, 2, 2},
-				{"Foudre", "La foudre s'abat sur l'ennemi et lui inflige des dégats", 70, 1, 1},
+				{"Alteration de l'ame", "Vol de vie (150% des dégats infligés)", 15, 100, 100},
+				{"Foudre", "La foudre s'abat sur l'ennemi et lui inflige des dégats", 70, 2, 2},
 				{"(%) Critical chance", "inflige le double des dégats", 10, -1, -1}}
 		}
 		utils.ClearConsole()
-		p.Initialize(nom, classe, 1, hpMax, hpMax, []Item{{"Argent", 10000}, {"Potions", 3}}, spells)
-		utils.SpeedMsg("Bienvenue, "+nom+" ! ", 60, "blue")
+		p.Initialize(nom, classe, 2, hpMax, hpMax, []Item{{"Argent", 10000}, {"Potions", 3}}, spells)
+		utils.SpeedMsg("Bienvenue, "+nom+" ! \n", 60, "blue")
+		fmt.Println()
+		fmt.Print("Appuyez pour entrer dans la partie")
 		utils.Input()
 		utils.ClearConsole()
 
@@ -142,7 +152,9 @@ func (p *Personnage) createCharacter() {
 
 		p.Initialize("Romain", "Chasseur", 2, 125, 125, []Item{{"Argent", 10000}, {"Potions", 3}}, spells)
 		utils.ClearConsole()
-		utils.SpeedMsg("Bienvenue, Romain !", 60, "blue")
+		utils.SpeedMsg("Bienvenue, Romain !\n", 60, "blue")
+		fmt.Println()
+		fmt.Print("Appuyez pour entrer dans la partie")
 		utils.Input()
 		utils.ClearConsole()
 
@@ -231,6 +243,57 @@ func (p *Personnage) abilitiesBattle(e *Ennemy) {
 
 		// On enlève les hp à l'ennemi
 		e.HpCurrent -= degats
+
+		// Effets post-spells
+		if choice == 1 { // Spell 1
+
+			if p.classe == "Arcaniste" { // Execution en dessous de 10%
+				if e.HpCurrent <= e.HpMax/10 {
+					e.HpCurrent = 0
+					Green.Println("[EXECUTION] Votre trou noir a éxecuté l'ennemi")
+				}
+
+			} else if p.classe == "Chasseur" { // Poison de 10 dégats
+				e.HpCurrent -= 10
+				Green.Println("[POISON] Vous infligez 10 dégats supplémentaires")
+
+			} else if p.classe == "Titan" { // Réduction des dégats
+				damage_reduce = 65
+				Green.Println("[BULLE] Vous obtenez 65% de réductions des dégats pour le prochain tour")
+			}
+
+		} else if choice == 2 {
+
+			if p.classe == "Arcaniste" { // Vol de vie (100% des dégats)
+				p.currentHp += degats
+				Green.Println("[VOL DE VIE] Vous récuperez " + strconv.Itoa(degats) + " points de vie")
+
+			} else if p.classe == "Chasseur" { // Damage reduce (pas complété) + Auto stack
+				damage_reduce = 50
+				Green.Println("[MAITRISE DU TERRAIN] Vous obtenez 50% de réduction des dégats pour le prochain tour")
+				p.skill[0].Damages += p.skill[0].Damages / 5
+				Green.Println("[MAITRISE DU TERRAIN] Votre attaque automatique inflige 20% de dégats supplémentaires")
+			}
+
+		} else if choice == 3 { // Amélioration des dégats du spell 2
+			if p.classe == "Arcaniste" {
+				p.skill[2].Damages += p.skill[2].Damages / 2
+				Green.Println("[FOUDRE] Votre altération de l'âme inflige 50% de dégats supplémentaires")
+
+			} else if p.classe == "Titan" { // Dé titanesque (67% --> +400% damages | 33% --> -70hp)
+				rand.Seed(time.Now().UnixNano())
+				aleatoire := rand.Intn(3) + 1
+				// On inflige
+				if aleatoire <= 2 {
+					degats *= 4
+					Green.Println("[DE TITANESQUE] Vous infligez " + strconv.Itoa(degats) + " dégats supplémentaires")
+					e.HpCurrent -= degats
+				} else {
+					Red.Println("[DE TITANESQUE] Vous perdez 70 points de vie")
+					p.currentHp -= 70
+				}
+			}
+		}
 		fmt.Println("------------------------")
 		fmt.Print("Appuyez sur entrée pour continuer")
 		utils.Input()
@@ -317,16 +380,26 @@ func (p *Personnage) ennemyRound(e *Ennemy) {
 		degats *= 2
 	}
 	time.Sleep(2 * time.Second)
+	fmt.Println("ancien degats : ", degats)
+	new_degats := degats * (1 - (damage_reduce / 100))
+	fmt.Println("nouveaux degats : ", new_degats)
 	p.currentHp -= degats
 	if critic == 1 {
 		Red.Println("[COUP CRITIQUE] Vous avez reçu " + strconv.Itoa(degats) + " dégats")
 	} else {
-		Red.Println("Vous avez reçu " + strconv.Itoa(degats) + " dégats")
+		if damage_reduce > 0 {
+			Green.Println("[REDUCTION DES DEGATS] Les dégats ont été reduits de " + strconv.Itoa(damage_reduce) + "%")
+			Red.Println("Vous avez reçu " + strconv.Itoa(degats) + " dégats")
+		} else {
+			Red.Println("Vous avez reçu " + strconv.Itoa(degats) + " dégats")
+		}
+
 	}
 	fmt.Println("---------------------------------")
 	fmt.Println()
 	fmt.Print("Appuyez sur entrée pour continuer")
 	utils.Input()
+	damage_reduce = 0
 }
 
 // Initialize initialise les données du personnage.
@@ -478,9 +551,13 @@ func (p *Personnage) isDead(e *Ennemy) bool {
 // battle est la fonction de combat
 func (p *Personnage) battle() {
 	utils.ClearConsole()
+	// Sauvegarde des spells qui changent
+
+	actualAuto := p.skill[0].Damages
+	spell2 := p.skill[2].Damages
 
 	// Configuration de l'ennemi
-	ennemi1 := Monstres[p.niveau-2]
+	ennemi1 := Monstres[p.niveau-2][p.ennemi]
 
 	// Affichage du duel et des statistiques de l'ennemi
 	utils.SpeedMsg(p.nom+" VS "+ennemi1.Name+"\n", 20, "red")
@@ -536,12 +613,22 @@ func (p *Personnage) battle() {
 		// Attribution des récompenses
 		p.addInventory("Potions", 3)
 		p.addInventory("Argent", 300)
-		p.niveau += 1
+
+		if ennemi1.IsBoss {
+			p.niveau += 1
+			p.ennemi = 0
+		} else {
+			p.ennemi += 1
+		}
+
 		fmt.Println()
 		fmt.Print("Appuyez sur entrée pour continuer")
 		utils.Input()
 		utils.ClearConsole()
-		Blue.Println("Vous avez atteint le niveau " + strconv.Itoa(p.niveau))
+
+		if p.ennemi == 0 {
+			Blue.Println("Vous avez atteint le niveau " + strconv.Itoa(p.niveau))
+		}
 
 		// Re attribution des utilisations de chaque spell
 		for i := 1; i < 4; i++ {
@@ -572,6 +659,9 @@ func (p *Personnage) battle() {
 		for i := 1; i < 4; i++ {
 			p.skill[i].StillUse = p.skill[i].MaxUse
 		}
+		// Réèattribution des dégats a l'auto
+		p.skill[0].Damages = actualAuto
+		p.skill[2].Damages = spell2
 		utils.ClearConsole()
 		p.Menu()
 	}
@@ -628,6 +718,7 @@ func (p *Personnage) displayInfo() {
 	fmt.Println("--- ", p.nom, " ---")
 	fmt.Println("Classe : ", p.classe)
 	fmt.Println("Niveau : ", p.niveau)
+	fmt.Println("Ennemis battus : " + strconv.Itoa(p.ennemi) + " /3")
 	fmt.Println("Points de vie : ", p.currentHp, "/", p.maxHP)
 	fmt.Println("--------------")
 }

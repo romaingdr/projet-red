@@ -133,9 +133,9 @@ func ChooseClass() string {
 	Blue.Println("Choisissez votre classe : ")
 	classes := []string{"Titan", "Arcaniste", "Chasseur"}
 	println("")
-	println("[1] Titan : a_completer")
-	println("[2] Arcaniste : a_completer")
-	println("[3] Chasseur : a_completer")
+	println("[1] Titan : «Une représentation de la force brute» | 180 Hp - 10 Ad")
+	println("[2] Arcaniste : «Manipule les lois de l'univers» | 100 Hp - 30 Ad")
+	println("[3] Chasseur : «N'apparait que dans l'ombre» | 125 Hp - 20 Ad")
 	println("")
 
 	for {
