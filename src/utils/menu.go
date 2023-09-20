@@ -14,16 +14,13 @@ func (p *Personnage) Menu() {
 	fmt.Println("[2] Inventaire")
 	fmt.Println("[3] Marchand")
 	fmt.Println("[4] Abilités")
-	if p.niveau == 1 {
-		fmt.Println("[5] Combat - tutoriel")
+	if p.niveau == 0 {
+		fmt.Println("[5] Tutoriel")
+	} else if p.niveau == 1 && p.ennemi == 0 {
+		fmt.Println("[5] Commencer l'histoire")
 	} else {
-		if p.niveau < 8 {
-			if p.ennemi == 2 {
-				fmt.Print("[5] Combat")
-				Red.Println(" - Boss")
-			} else {
-				fmt.Println("[5] Combat")
-			}
+		if p.niveau < 7 {
+			fmt.Println("[5] continuer l'histoire")
 		} else {
 			fmt.Println("[5] fin ?")
 		}
@@ -63,7 +60,7 @@ func (p *Personnage) Menu() {
 	// Combat tutoriel si niveau 1 sinon menu de combat
 	case 5:
 		ClearConsole()
-		if p.niveau == 1 {
+		if p.niveau == 0 {
 			p.battleTutorial()
 		} else {
 			p.battle()

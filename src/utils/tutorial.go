@@ -53,7 +53,7 @@ func (p *Personnage) battleTutorial() {
 	ClearConsole()
 
 	// Passage niveau 2 à la fin du tutoriel
-	p.niveau = 2
+	p.niveau = 1
 	Blue.Println("Vous avez atteint le niveau 2 !")
 
 	// Retour au menu

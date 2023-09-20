@@ -55,7 +55,9 @@ var (
 // battle est la fonction de combat
 func (p *Personnage) battle() {
 	ClearConsole()
-	if p.niveau == 8 { // LE JEU EST TERMINE
+	Script(p)
+	ClearConsole()
+	if p.niveau == 7 { // LE JEU EST TERMINE
 		SpeedMsg("Félicitation "+p.nom+"\n", 30, "blue")
 		time.Sleep(2 * time.Second)
 		SpeedMsg("Vous avez battu tout les ennemis\n", 20, "blue")
@@ -74,7 +76,7 @@ func (p *Personnage) battle() {
 	spell3 := p.skill[3].Damages
 
 	// Configuration de l'ennemi
-	ennemi1 := Monstres[p.niveau-2][p.ennemi]
+	ennemi1 := Monstres[p.niveau-1][p.ennemi]
 
 	// Affichage du duel et des statistiques de l'ennemi
 	SpeedMsg(p.nom+" VS "+ennemi1.Name+"\n", 20, "red")

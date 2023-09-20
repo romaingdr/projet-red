@@ -9,6 +9,5 @@ import (
 func main() {
 	utils.ClearConsole()
 	var p1 utils.Personnage
-	p1.CreateCharacter()
-	p1.Menu()
+	utils.StartScreen(&p1, 1)
 }
