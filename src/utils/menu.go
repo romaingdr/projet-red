@@ -1,3 +1,5 @@
+// FICHIER UTILISE POUR LA GESTION DU MENU ET DE SES SOUS MENUS
+
 package utils
 
 import (
@@ -25,8 +27,8 @@ func (p *Personnage) Menu() {
 			fmt.Println("[5] fin ?")
 		}
 	}
-	fmt.Println("[6] Quitter le jeu")
-	fmt.Println("[7] Multijoueur (en cours de developpement)")
+	fmt.Println("[6] Multijoueur PvP (BETA)")
+	fmt.Println("[7] Quitter le jeu")
 	fmt.Println("----------------")
 
 	choice, _ := Inputint()
@@ -67,14 +69,15 @@ func (p *Personnage) Menu() {
 			p.battle()
 		}
 
-	// Ferme le jeu complétement
+	// Lance le mode multijoueur PvP
 	case 6:
 		ClearConsole()
-		Red.Println("Fermeture du jeu...")
+		MultiStartScreen(p)
 
+	// Ferme complétement le jeu
 	case 7:
 		ClearConsole()
-		MultiStartScreen(p)
+		Red.Println("Fermeture du jeu...")
 	// Choix non proposé
 	default:
 		ClearConsole()

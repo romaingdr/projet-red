@@ -1,3 +1,5 @@
+// FICHIER UTILISE POUR LA GESTION DE L'INVENTAIRE (affichage, ajout, suppression)
+
 package utils
 
 // takePotion permet au joueur de prendre une potion si il en a une.

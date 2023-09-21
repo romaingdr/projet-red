@@ -1,3 +1,5 @@
+// FICHIER UTILISE POUR STOCKER LES STRUCTURES DU JEU
+
 package utils
 
 // Ennemy Structure

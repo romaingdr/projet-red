@@ -1,17 +1,25 @@
+// FICHIER UTILISE POUR LA CONFIGURATION DU SOCKET TCP AINSI QUE LE COMBAT ENTRE LES JOUEURS CONNECTES
+
 package utils
 
 import (
 	"fmt"
+	"math/rand"
 	"net"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var (
 	MaxHpEnnemy     int
 	CurrentHpEnnemy int
+	pseudoEnnemy    string
+	round           string
+	clientConns     []net.Conn
 )
 
+// SliceArgument sert à split les arguments reçus par le socket et séparés par des "|"
 func sliceArgument(phrase string) (string, string) {
 	mots := strings.Split(phrase, "|")
 	if len(mots) == 2 {
@@ -22,6 +30,7 @@ func sliceArgument(phrase string) (string, string) {
 	}
 }
 
+// GetLocalIP sert à récuperer l'ip locale de la machine host
 func GetLocalIP() (string, error) {
 	// Crée une connexion UDP à une adresse quelconque
 	conn, err := net.Dial("udp", "8.8.8.8:80")
@@ -37,6 +46,7 @@ func GetLocalIP() (string, error) {
 	return localAddr.IP.String(), nil
 }
 
+// MultiStartScreen sert à afficher le menu du mode Multijoueur PvP afin de Créer/Rejoindre un serveur
 func MultiStartScreen(p *Personnage) {
 	fmt.Println("[1] Créer un serveur")
 	fmt.Println("[2] Rejoindre un serveur")
@@ -57,6 +67,7 @@ func MultiStartScreen(p *Personnage) {
 }
 
 // Coté client
+// joinServer sert à rejoindre un serveur avec l'ip locale de l'ordinateur host , connexion sur le port 12345
 func joinServer(p *Personnage) {
 	ClearConsole()
 	fmt.Print("IP du serveur : ")
@@ -64,15 +75,19 @@ func joinServer(p *Personnage) {
 	serverPort := 12345
 
 	ClearConsole()
-	// Crée une connexion TCP vers le serveur
+
+	// connexion tcp au serveur
 	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%d", serverIP, serverPort))
 	if err != nil {
-		fmt.Println("Erreur lors de la connexion au serveur :", err)
+		Red.Println("Impossible de trouver le serveur !")
 		return
 	}
 	defer conn.Close()
 
-	// On envoie notre pseudo
+	clientConns = append(clientConns, conn)
+
+	round = "server"
+	// On envoie notre pseudo et nos hp
 	message := p.nom + "|" + strconv.Itoa(p.maxHP)
 	_, err = conn.Write([]byte(message))
 	if err != nil {
@@ -80,7 +95,7 @@ func joinServer(p *Personnage) {
 		return
 	}
 
-	// Lisez des données du serveur
+	// Lis le pseudo / hp du joueur host
 	buffer := make([]byte, 1024)
 	n, err := conn.Read(buffer)
 	if err != nil {
@@ -88,18 +103,25 @@ func joinServer(p *Personnage) {
 		return
 	}
 
-	// Traitez les données reçues du serveur ici
 	message1 := string(buffer[:n])
 	pseudo, hp := sliceArgument(message1)
 	hpAdversaire, _ := strconv.Atoi(hp)
+	pseudoEnnemy = pseudo
 	CurrentHpEnnemy = hpAdversaire
 	MaxHpEnnemy = hpAdversaire
 	fmt.Println("Vous avez rejoint :", pseudo)
-	afficheHp(p, pseudo, CurrentHpEnnemy, MaxHpEnnemy)
+	fmt.Println()
 
-	// Créez une boucle pour maintenir la connexion ouverte et échanger des informations
+	for i := 10; i > 0; i-- {
+		fmt.Printf("\rLa partie commence dans %d secondes", i)
+		time.Sleep(1 * time.Second)
+	}
+
+	ClearConsole()
+	afficheMenuClient(p)
+
 	for {
-		// Lisez des données du serveur
+		// Si une attaque est reçue
 		buffer := make([]byte, 1024)
 		n, err := conn.Read(buffer)
 		if err != nil {
@@ -107,23 +129,28 @@ func joinServer(p *Personnage) {
 			return
 		}
 
-		// Traitez les données reçues du serveur ici
-		messageFromServer := string(buffer[:n])
-		fmt.Println("Message du serveur :", messageFromServer)
+		// Traiter l'attaque
+		attaque := string(buffer[:n])
+		degatsRecu, crit := sliceArgument(attaque)
+		degats, _ := strconv.Atoi(degatsRecu)
+		if crit == "true" {
+			SpeedMsg("[COUP CRITIQUE] "+pseudoEnnemy+" vous inflige "+degatsRecu+" dégats\n", 20, "red")
+		} else {
+			SpeedMsg(pseudoEnnemy+" vous inflige "+degatsRecu+" dégats\n", 20, "red")
+		}
+		p.currentHp -= degats
+		fmt.Println("--------------------")
+		round = "client"
+		time.Sleep(4 * time.Second)
+		ClearConsole()
+		afficheMenuClient(p)
 
-		// Vous pouvez également envoyer des données au serveur si nécessaire
-		// messageToServer := "Données à envoyer"
-		// _, err = conn.Write([]byte(messageToServer))
-		// if err != nil {
-		//     fmt.Println("Erreur lors de l'envoi de données au serveur :", err)
-		//     return
-		// }
 	}
 }
 
 // Coté serveur
+// createServer sert à créer un serveur sur le port 12345 de la machine host
 func createServer(p *Personnage) {
-	// Crée un socket TCP
 	listener, err := net.Listen("tcp", "0.0.0.0:12345")
 	if err != nil {
 		fmt.Println("Erreur lors de la création du serveur :", err)
@@ -140,27 +167,27 @@ func createServer(p *Personnage) {
 	// Message d'attente
 	ClearConsole()
 	fmt.Println("Adresse de connexion : ", ip_locale)
-	fmt.Println("En attente d'un joueur pour combattre...", ip_locale)
+	fmt.Println("En attente d'un joueur pour combattre...")
 
 	for {
-		// Accepte les connexions entrantes
 		conn, err := listener.Accept()
 		if err != nil {
 			fmt.Println("Erreur lors de l'acceptation d'une connexion entrante :", err)
 			continue
 		}
-
-		// Traite la connexion dans une goroutine
 		go handleConnection(conn, p)
 	}
 }
 
+// handelConnection sert à maintenir la connexion sur le serveur et gérer les sockets d'informations entrantes et sortantes
 func handleConnection(conn net.Conn, p *Personnage) {
 	defer conn.Close()
 
 	// Message de connexion
 	ClearConsole()
 	fmt.Println("Un joueur a été trouvé !")
+	round = "server"
+	clientConns = append(clientConns, conn)
 
 	// Envoi de notre pseudo au client
 	message := p.nom + "|" + strconv.Itoa(p.maxHP)
@@ -176,36 +203,379 @@ func handleConnection(conn net.Conn, p *Personnage) {
 
 	message1 := string(buffer[:n])
 	pseudo, hp := sliceArgument(message1)
+	pseudoEnnemy = pseudo
 	hpAdversaire, _ := strconv.Atoi(hp)
 	CurrentHpEnnemy = hpAdversaire
 	MaxHpEnnemy = hpAdversaire
 	fmt.Println("Vous jouez contre :", pseudo)
-	afficheHp(p, pseudo, CurrentHpEnnemy, MaxHpEnnemy)
+	fmt.Println()
 
-	// Créez une boucle pour maintenir la connexion ouverte et échanger des informations
+	for i := 10; i > 0; i-- {
+		fmt.Printf("\rLa partie commence dans %d secondes", i)
+		time.Sleep(1 * time.Second)
+	}
+
+	ClearConsole()
+	afficheMenuServer(p)
+
 	for {
-		// Lisez des données du client
+
+		// Une attaque est reçue
 		n, err := conn.Read(buffer)
 		if err != nil {
 			fmt.Println("Erreur lors de la lecture depuis le client :", err)
 			return
 		}
 
-		// Traitez les données reçues du client ici
-		messageFromClient := string(buffer[:n])
-		fmt.Println("Message du client :", messageFromClient)
+		// Gérer l'attaque
+		attaque := string(buffer[:n])
+		degatsRecu, crit := sliceArgument(attaque)
+		degats, _ := strconv.Atoi(degatsRecu)
+		if crit == "true" {
+			SpeedMsg("[COUP CRITIQUE] "+pseudoEnnemy+" vous inflige "+degatsRecu+" dégats\n", 20, "red")
+		} else {
+			SpeedMsg(pseudoEnnemy+" vous inflige "+degatsRecu+" dégats\n", 20, "red")
+		}
+		p.currentHp -= degats
+		fmt.Println("--------------------")
+		round = "server"
+		time.Sleep(4 * time.Second)
+		ClearConsole()
+		afficheMenuServer(p)
 
-		// Vous pouvez également envoyer des données au client si nécessaire
-		// messageToClient := "Données à envoyer"
-		// _, err = conn.Write([]byte(messageToClient))
-		// if err != nil {
-		//     fmt.Println("Erreur lors de l'envoi de données au client :", err)
-		//     return
-		// }
 	}
 }
 
+// Autre fonctions
+// afficheHp sert à afficher progressivement les hp du joueur et de l'ennemi
 func afficheHp(p *Personnage, pseudo string, current int, max int) {
 	SpeedMsg(p.nom+" - "+strconv.Itoa(p.currentHp)+"/"+strconv.Itoa(p.maxHP)+"\n", 20, "green")
 	SpeedMsg(pseudo+" - "+strconv.Itoa(current)+"/"+strconv.Itoa(max)+"\n", 20, "red")
+}
+
+// afficheHpNoDelay sert à afficher les hp du joueur et de l'ennemi sans délai d'écriture
+func afficheHpNoDelay(p *Personnage, pseudo string, current int, max int) {
+	Green.Println(p.nom + " - " + strconv.Itoa(p.currentHp) + "/" + strconv.Itoa(p.maxHP))
+	Red.Println(pseudo + " - " + strconv.Itoa(current) + "/" + strconv.Itoa(max))
+}
+
+// afficheMenuServer sert à afficher le menu de combat côté serveur
+func afficheMenuServer(p *Personnage) {
+	if !(isDead(p)) {
+		if round == "server" {
+			afficheHp(p, pseudoEnnemy, CurrentHpEnnemy, MaxHpEnnemy)
+			fmt.Println("----- A votre tour -----")
+			fmt.Println("[1] Attaque auto")
+			fmt.Println("[2] Abilités")
+
+			fmt.Println("------------------------")
+			choice, _ := Inputint()
+			switch choice {
+
+			// AUTO ATTAQUE
+			case 1:
+				degats := p.skill[0].Damages
+				critic := rand.Intn(100) + 1
+				if critic <= p.skill[4].Damages {
+					degats *= 2
+					critic = 1
+				}
+				if critic == 1 {
+					sendMessageToClient(clientConns, strconv.Itoa(degats)+"|true")
+				} else {
+					sendMessageToClient(clientConns, strconv.Itoa(degats)+"|false")
+				}
+
+				ClearConsole()
+				afficheHp(p, pseudoEnnemy, CurrentHpEnnemy, MaxHpEnnemy)
+				fmt.Println("----- A votre tour -----")
+				SpeedMsg("Vous utilisez une attaque automatique\n", 20, "default")
+
+				if critic == 1 {
+					SpeedMsg("[COUP CRITIQUE] "+strconv.Itoa(degats)+" infligés à "+pseudoEnnemy+"\n", 20, "green")
+				} else {
+					SpeedMsg(strconv.Itoa(degats)+" infligés à "+pseudoEnnemy+"\n", 20, "green")
+				}
+				fmt.Println("------------------------")
+				time.Sleep(1700 * time.Millisecond)
+				CurrentHpEnnemy -= degats
+				round = "client"
+				afficheMenuServer(p)
+
+			// Spells
+			case 2:
+				// Affichage des spells
+				ClearConsole()
+				afficheHpNoDelay(p, pseudoEnnemy, CurrentHpEnnemy, MaxHpEnnemy)
+				fmt.Println("----- A votre tour -----")
+
+				for i := 1; i < 4; i++ {
+					skill := p.skill[i]
+					fmt.Printf("[%d] %-20s %-10d %d/%d\n", i, skill.Name, skill.Damages, skill.StillUse, skill.MaxUse)
+				}
+
+				fmt.Println("------------------------")
+				fmt.Println("[4] Sortir")
+
+				choice, _ := Inputint()
+				var degats int
+
+				// Calcul si le coup va être un crit (en fonction du pourcentage de chance de crit ==> p.skill[4].Damages)
+				rand.Seed(time.Now().UnixNano())
+				crit := rand.Intn(100) + 1
+				critBool := crit <= p.skill[4].Damages
+
+				switch choice {
+				case 1, 2, 3:
+					skill := p.skill[choice]
+					if skill.StillUse > 0 {
+
+						// La compétence est utilisée
+						degats = skill.Damages
+						p.skill[choice].StillUse -= 1
+
+						if critBool {
+							degats *= 2
+							sendMessageToClient(clientConns, strconv.Itoa(degats)+"|true")
+							ClearConsole()
+							afficheHp(p, pseudoEnnemy, CurrentHpEnnemy, MaxHpEnnemy)
+							fmt.Println("----- A votre tour -----")
+							SpeedMsg("Vous utilisez "+skill.Name+"\n", 20, "default")
+							SpeedMsg("[COUP CRITIQUE] "+strconv.Itoa(degats)+" infligés à "+pseudoEnnemy+"\n", 20, "green")
+							fmt.Println("------------------------")
+							time.Sleep(1700 * time.Millisecond)
+							CurrentHpEnnemy -= degats
+							round = "client"
+							afficheMenuServer(p)
+						} else {
+							sendMessageToClient(clientConns, strconv.Itoa(degats)+"|false")
+							ClearConsole()
+							afficheHp(p, pseudoEnnemy, CurrentHpEnnemy, MaxHpEnnemy)
+							fmt.Println("----- A votre tour -----")
+							SpeedMsg("Vous utilisez "+skill.Name+"\n", 20, "default")
+							SpeedMsg(strconv.Itoa(degats)+" infligés à "+pseudoEnnemy+"\n", 20, "green")
+							fmt.Println("------------------------")
+							time.Sleep(1700 * time.Millisecond)
+							CurrentHpEnnemy -= degats
+							round = "client"
+							afficheMenuServer(p)
+						}
+					} else {
+						ClearConsole()
+						Red.Println("Vous ne pouvez plus utiliser cette compétence !")
+						afficheMenuServer(p)
+					}
+
+				default:
+					ClearConsole()
+					afficheMenuServer(p)
+				}
+
+			// MAUVAIS INPUT
+			default:
+				ClearConsole()
+				Red.Println("Veuillez saisir une donnée valide")
+				afficheMenuServer(p)
+
+			}
+		} else {
+			ClearConsole()
+			afficheHp(p, pseudoEnnemy, CurrentHpEnnemy, MaxHpEnnemy)
+			fmt.Println("----- Tour de " + pseudoEnnemy + " -----")
+			SpeedMsg(pseudoEnnemy+" attaque...\n", 20, "default")
+		}
+	} else {
+		if p.currentHp <= 0 {
+			ClearConsole()
+			SpeedMsg("Vainqueur : "+pseudoEnnemy+"\n", 20, "default")
+			SpeedMsg("Vous avez perdu le combat !\n", 20, "red")
+			fmt.Println()
+			fmt.Print("retourner au menu")
+			Input()
+			ClearConsole()
+			p.Menu()
+		} else {
+			ClearConsole()
+			SpeedMsg("Vainqueur : "+p.nom+"\n", 20, "default")
+			SpeedMsg("Vous avez gagné le combat !\n", 20, "green")
+			fmt.Println()
+			fmt.Print("retourner au menu")
+			Input()
+			ClearConsole()
+			p.Menu()
+		}
+	}
+}
+
+// afficheMenuServer sert à afficher le menu de combat côté client
+func afficheMenuClient(p *Personnage) {
+	if !(isDead(p)) {
+
+		if round == "server" {
+			ClearConsole()
+			afficheHp(p, pseudoEnnemy, CurrentHpEnnemy, MaxHpEnnemy)
+			fmt.Println("----- Tour de " + pseudoEnnemy + " -----")
+			SpeedMsg(pseudoEnnemy+" attaque...\n", 20, "default")
+		} else {
+			ClearConsole()
+			afficheHp(p, pseudoEnnemy, CurrentHpEnnemy, MaxHpEnnemy)
+			fmt.Println("----- A votre tour -----")
+			fmt.Println("[1] Attaque auto")
+			fmt.Println("[2] Abilités")
+
+			fmt.Println("------------------------")
+			choice, _ := Inputint()
+			switch choice {
+			case 1:
+				degats := p.skill[0].Damages
+				critic := rand.Intn(100) + 1
+				if critic <= p.skill[4].Damages {
+					degats *= 2
+					critic = 1
+				}
+				if critic == 1 {
+					sendMessageToServer(clientConns, strconv.Itoa(degats)+"|true")
+				} else {
+					sendMessageToServer(clientConns, strconv.Itoa(degats)+"|false")
+				}
+				ClearConsole()
+				afficheHp(p, pseudoEnnemy, CurrentHpEnnemy, MaxHpEnnemy)
+				fmt.Println("----- A votre tour -----")
+				SpeedMsg("Vous utilisez une attaque automatique\n", 20, "default")
+
+				if critic == 1 {
+					SpeedMsg("[COUP CRITIQUE] "+strconv.Itoa(degats)+" infligés à "+pseudoEnnemy+"\n", 20, "green")
+				} else {
+					SpeedMsg(strconv.Itoa(degats)+" infligés à "+pseudoEnnemy+"\n", 20, "green")
+				}
+				fmt.Println("------------------------")
+				time.Sleep(1700 * time.Millisecond)
+				CurrentHpEnnemy -= degats
+				round = "server"
+				ClearConsole()
+				afficheMenuClient(p)
+			// Spells
+			case 2:
+				// Affichage des spells
+				ClearConsole()
+				afficheHpNoDelay(p, pseudoEnnemy, CurrentHpEnnemy, MaxHpEnnemy)
+				fmt.Println("----- A votre tour -----")
+
+				for i := 1; i < 4; i++ {
+					skill := p.skill[i]
+					fmt.Printf("[%d] %-20s %-10d %d/%d\n", i, skill.Name, skill.Damages, skill.StillUse, skill.MaxUse)
+				}
+
+				fmt.Println("------------------------")
+				fmt.Println("[4] Sortir")
+
+				choice, _ := Inputint()
+				var degats int
+
+				// Calcul si le coup va être un crit (en fonction du pourcentage de chance de crit ==> p.skill[4].Damages)
+				rand.Seed(time.Now().UnixNano())
+				crit := rand.Intn(100) + 1
+				critBool := crit <= p.skill[4].Damages
+
+				switch choice {
+				case 1, 2, 3:
+					skill := p.skill[choice]
+					if skill.StillUse > 0 {
+
+						// La compétence est utilisée
+						degats = skill.Damages
+						p.skill[choice].StillUse -= 1
+						if critBool {
+							degats *= 2
+							sendMessageToServer(clientConns, strconv.Itoa(degats)+"|true")
+							ClearConsole()
+							afficheHp(p, pseudoEnnemy, CurrentHpEnnemy, MaxHpEnnemy)
+							fmt.Println("----- A votre tour -----")
+							SpeedMsg("Vous utilisez "+skill.Name+"\n", 20, "default")
+							SpeedMsg("[COUP CRITIQUE] "+strconv.Itoa(degats)+" infligés à "+pseudoEnnemy+"\n", 20, "green")
+							fmt.Println("------------------------")
+							time.Sleep(1700 * time.Millisecond)
+							CurrentHpEnnemy -= degats
+							round = "server"
+							afficheMenuClient(p)
+						} else {
+							sendMessageToClient(clientConns, strconv.Itoa(degats)+"|false")
+							ClearConsole()
+							afficheHp(p, pseudoEnnemy, CurrentHpEnnemy, MaxHpEnnemy)
+							fmt.Println("----- A votre tour -----")
+							SpeedMsg("Vous utilisez "+skill.Name+"\n", 20, "default")
+							SpeedMsg(strconv.Itoa(degats)+" infligés à "+pseudoEnnemy+"\n", 20, "green")
+							fmt.Println("------------------------")
+							time.Sleep(1700 * time.Millisecond)
+							CurrentHpEnnemy -= degats
+							round = "server"
+							afficheMenuClient(p)
+						}
+					} else {
+						ClearConsole()
+						Red.Println("Vous ne pouvez plus utiliser cette compétence !")
+						afficheMenuClient(p)
+					}
+				default:
+					ClearConsole()
+					afficheMenuServer(p)
+				}
+			default:
+				ClearConsole()
+				Red.Println("Veuillez saisir une donnée valide")
+				afficheMenuClient(p)
+			}
+		}
+	} else {
+		if p.currentHp <= 0 {
+			ClearConsole()
+			SpeedMsg("Vainqueur : "+pseudoEnnemy+"\n", 20, "default")
+			SpeedMsg("Vous avez perdu le combat !\n", 20, "red")
+			fmt.Println()
+			fmt.Print("retourner au menu")
+			Input()
+			ClearConsole()
+			p.Menu()
+		} else {
+			ClearConsole()
+			SpeedMsg("Vainqueur : "+p.nom+"\n", 20, "default")
+			SpeedMsg("Vous avez gagné le combat !\n", 20, "green")
+			fmt.Println()
+			fmt.Print("retourner au menu")
+			Input()
+			ClearConsole()
+			p.Menu()
+		}
+	}
+}
+
+// sendMessageToServer sert à envoyer un message au serveur depuis le client
+func sendMessageToServer(clientConns []net.Conn, message string) {
+	for _, clientConn := range clientConns {
+		_, err := clientConn.Write([]byte(message))
+		if err != nil {
+			fmt.Println("Erreur lors de l'envoi de données au client :", err)
+			// Gérez l'erreur de manière appropriée
+		}
+	}
+}
+
+// sendMessageToServer sert à envoyer un message au client depuis le serveur
+func sendMessageToClient(clientConns []net.Conn, message string) {
+	for _, clientConn := range clientConns {
+		_, err := clientConn.Write([]byte(message))
+		if err != nil {
+			fmt.Println("Erreur lors de l'envoi de données au client :", err)
+			// Gérez l'erreur de manière appropriée
+		}
+	}
+}
+
+// isDead sert à vérifier si un des deux joueurs est mort
+func isDead(p *Personnage) bool {
+	if p.currentHp <= 0 || CurrentHpEnnemy <= 0 {
+		return true
+	} else {
+		return false
+	}
 }

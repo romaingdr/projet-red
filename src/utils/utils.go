@@ -1,3 +1,5 @@
+// FICHIER UTILISE POUR STOCKER TOUTES LES FONCTIONS UTILES PENDANT LE JEU (input, affichage etc)
+
 package utils
 
 import (
@@ -84,35 +86,5 @@ func SpeedMsg(message string, speed int, colorName string) {
 	for _, char := range message {
 		selectedColor.Print(string(char))
 		time.Sleep(time.Duration(speed) * time.Millisecond)
-	}
-}
-
-// choixClasse affiche les classes disponibles et permet à l'utilisateur de choisir une classe.
-func ChooseClass() string {
-	ClearConsole()
-
-	Green.Println("Nom du personnage validé !")
-	Blue.Println("Choisissez votre classe : ")
-	classes := []string{"Titan", "Arcaniste", "Chasseur"}
-	println("")
-	println("[1] Titan : «Une représentation de la force brute» | 180 Hp - 10 Ad")
-	println("[2] Arcaniste : «Manipule les lois de l'univers» | 100 Hp - 30 Ad")
-	println("[3] Chasseur : «N'apparait que dans l'ombre» | 125 Hp - 20 Ad")
-	println("")
-
-	for {
-		choice, _ := Inputint()
-		if choice > 0 && choice < 4 {
-			return classes[choice-1]
-		} else {
-			ClearConsole()
-			Red.Println("Veuillez saisir une option valide")
-			Blue.Println("Choisissez votre classe : ")
-			println("")
-			println("[1] Titan : a_completer")
-			println("[2] Arcaniste : a_completer")
-			println("[3] Chasseur : a_completer")
-			println("")
-		}
 	}
 }

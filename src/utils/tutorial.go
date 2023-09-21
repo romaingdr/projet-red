@@ -1,3 +1,5 @@
+// FICHIER UTILISE POUR GERER LE TUTORIEL DE COMBAT (NIVEAU 0 seulement)
+
 package utils
 
 import "fmt"

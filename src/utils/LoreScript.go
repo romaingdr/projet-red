@@ -2,6 +2,7 @@ package utils
 
 import "fmt"
 
+// Script affiche le texte du lore en fonction du niveau
 func Script(p *Personnage) {
 	if p.niveau == 1 {
 		ScriptNiv1(p)
@@ -18,9 +19,10 @@ func Script(p *Personnage) {
 	}
 }
 
+// ScriptNiv1 affiche le texte du lore sur tout le niveau 1
 func ScriptNiv1(p *Personnage) {
 	if p.ennemi == 0 {
-		fmt.Println("Premier Niveau , 1er ennemi")
+		SpeedMsg("Romain", 20, "green")
 		Input()
 	} else if p.ennemi == 1 {
 		fmt.Println("Premier Niveau , 2eme ennemi")
@@ -31,6 +33,7 @@ func ScriptNiv1(p *Personnage) {
 	}
 }
 
+// ScriptNiv2 affiche le texte du lore sur tout le niveau 1
 func ScriptNiv2(p *Personnage) {
 	if p.ennemi == 0 {
 		fmt.Println("Deuxieme Niveau , 1er ennemi")
@@ -44,6 +47,7 @@ func ScriptNiv2(p *Personnage) {
 	}
 }
 
+// ScriptNiv3 affiche le texte du lore sur tout le niveau 1
 func ScriptNiv3(p *Personnage) {
 	if p.ennemi == 0 {
 		fmt.Println("Troisieme Niveau , 1er ennemi")
@@ -57,6 +61,7 @@ func ScriptNiv3(p *Personnage) {
 	}
 }
 
+// ScriptNiv4 affiche le texte du lore sur tout le niveau 1
 func ScriptNiv4(p *Personnage) {
 	if p.ennemi == 0 {
 		fmt.Println("Quatrieme Niveau , 1er ennemi")
@@ -70,6 +75,7 @@ func ScriptNiv4(p *Personnage) {
 	}
 }
 
+// ScriptNiv5 affiche le texte du lore sur tout le niveau 1
 func ScriptNiv5(p *Personnage) {
 	if p.ennemi == 0 {
 		fmt.Println("Cinquieme Niveau , 1er ennemi")
@@ -83,6 +89,7 @@ func ScriptNiv5(p *Personnage) {
 	}
 }
 
+// ScriptNiv6 affiche le texte du lore sur tout le niveau 1
 func ScriptNiv6(p *Personnage) {
 	if p.ennemi == 0 {
 		fmt.Println("Sixieme Niveau , 1er ennemi")

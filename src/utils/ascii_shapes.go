@@ -1,3 +1,5 @@
+// FICHIER UTILISE POUR L'AFFICHAGE DE LA FENETRE DE DEPART
+
 package utils
 
 import (
@@ -6,6 +8,7 @@ import (
 	"os"
 )
 
+// StartScreen affiche la page d'accueil en ASCII ART pour choisir entre jouer une nouvelle partie et quitter le jeu
 func StartScreen(p *Personnage, state int) {
 	ClearConsole()
 	err := keyboard.Open()
