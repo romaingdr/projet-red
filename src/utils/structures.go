@@ -49,3 +49,10 @@ type Article struct {
 	Health      int
 	Unique      bool
 }
+
+type EnnemyObjective struct {
+	Name      string
+	HpCurrent int
+	HpMax     int
+	Damages   int
+}

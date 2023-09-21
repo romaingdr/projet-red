@@ -27,8 +27,9 @@ func (p *Personnage) Menu() {
 			fmt.Println("[5] fin ?")
 		}
 	}
-	fmt.Println("[6] Multijoueur PvP (BETA)")
-	fmt.Println("[7] Quitter le jeu")
+	fmt.Println("[6] Multijoueur - PvP (BETA)")
+	fmt.Println("[7] Multijoueur - Objectifs (BETA)")
+	fmt.Println("[8] Quitter le jeu")
 	fmt.Println("----------------")
 
 	choice, _ := Inputint()
@@ -74,8 +75,11 @@ func (p *Personnage) Menu() {
 		ClearConsole()
 		MultiStartScreen(p)
 
-	// Ferme complétement le jeu
 	case 7:
+		ClearConsole()
+		multiObjectives(p)
+	// Ferme complétement le jeu
+	case 8:
 		ClearConsole()
 		Red.Println("Fermeture du jeu...")
 	// Choix non proposé

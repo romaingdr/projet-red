@@ -17,6 +17,8 @@ var (
 	pseudoEnnemy    string
 	round           string
 	clientConns     []net.Conn
+	poisonEnnemy    = 0
+	poisonUsed      = false
 )
 
 // SliceArgument sert à split les arguments reçus par le socket et séparés par des "|"
@@ -58,6 +60,7 @@ func MultiStartScreen(p *Personnage) {
 	case 2:
 		joinServer(p)
 	case 3:
+		ClearConsole()
 		p.Menu()
 	default:
 		ClearConsole()
@@ -80,7 +83,7 @@ func joinServer(p *Personnage) {
 	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%d", serverIP, serverPort))
 	if err != nil {
 		Red.Println("Impossible de trouver le serveur !")
-		return
+		MultiStartScreen(p)
 	}
 	defer conn.Close()
 
@@ -281,8 +284,24 @@ func afficheMenuServer(p *Personnage) {
 					critic = 1
 				}
 				if critic == 1 {
+					if poisonEnnemy > 0 {
+						fmt.Println("[POISON] Vous infligez 10 dégats supplémentaires")
+						degats += 10
+						poisonEnnemy -= 1
+						poisonUsed = true
+					} else {
+						poisonUsed = false
+					}
 					sendMessageToClient(clientConns, strconv.Itoa(degats)+"|true")
 				} else {
+					if poisonEnnemy > 0 {
+						fmt.Println("[POISON] Vous infligez 10 dégats supplémentaires")
+						degats += 10
+						poisonEnnemy -= 1
+						poisonUsed = true
+					} else {
+						poisonUsed = false
+					}
 					sendMessageToClient(clientConns, strconv.Itoa(degats)+"|false")
 				}
 
@@ -290,7 +309,9 @@ func afficheMenuServer(p *Personnage) {
 				afficheHp(p, pseudoEnnemy, CurrentHpEnnemy, MaxHpEnnemy)
 				fmt.Println("----- A votre tour -----")
 				SpeedMsg("Vous utilisez une attaque automatique\n", 20, "default")
-
+				if poisonUsed {
+					fmt.Println("[POISON] Vous infligez 10 dégats supplémentaires")
+				}
 				if critic == 1 {
 					SpeedMsg("[COUP CRITIQUE] "+strconv.Itoa(degats)+" infligés à "+pseudoEnnemy+"\n", 20, "green")
 				} else {
@@ -329,37 +350,80 @@ func afficheMenuServer(p *Personnage) {
 				case 1, 2, 3:
 					skill := p.skill[choice]
 					if skill.StillUse > 0 {
+						// Affichage du début
+						ClearConsole()
+						afficheHp(p, pseudoEnnemy, CurrentHpEnnemy, MaxHpEnnemy)
+						fmt.Println("----- A votre tour -----")
+						SpeedMsg("Vous utilisez "+skill.Name+"\n", 20, "default")
 
 						// La compétence est utilisée
 						degats = skill.Damages
 						p.skill[choice].StillUse -= 1
 
+						// Effets du spell
+
+						if choice == 1 { // Spell 1
+
+							if p.classe == "Arcaniste" { // Execution en dessous de 10%
+								if CurrentHpEnnemy <= MaxHpEnnemy/10 {
+									CurrentHpEnnemy = 0
+									degats = CurrentHpEnnemy
+								}
+
+							} else if p.classe == "Chasseur" { // Poison de 10 dégats
+								poisonEnnemy = 3
+
+							} else if p.classe == "Titan" { // Réduction des dégats
+								p.skill[4].Damages += 10
+								Green.Println("[BULLE] Vous obtenez 10% de chance de coup critique")
+							}
+
+						} else if choice == 2 {
+
+							if p.classe == "Chasseur" { // Damage reduce  + 20% auto
+								p.skill[0].Damages += p.skill[0].Damages / 5
+								Green.Println("[MAITRISE DU TERRAIN] Votre attaque automatique inflige 20% de dégats supplémentaires")
+							}
+
+						} else if choice == 3 { // Amélioration des dégats du spell 2
+
+							if p.classe == "Arcaniste" {
+								p.skill[2].Damages += p.skill[2].Damages / 2
+								Green.Println("[FOUDRE] Votre altération de l'âme inflige 50% de dégats supplémentaires")
+							}
+						}
+
+						// Envoi des degats
 						if critBool {
 							degats *= 2
+							if poisonEnnemy > 0 {
+								fmt.Println("[POISON] Vous infligez 10 dégats supplémentaires")
+								degats += 10
+								poisonEnnemy -= 1
+							}
 							sendMessageToClient(clientConns, strconv.Itoa(degats)+"|true")
-							ClearConsole()
-							afficheHp(p, pseudoEnnemy, CurrentHpEnnemy, MaxHpEnnemy)
-							fmt.Println("----- A votre tour -----")
-							SpeedMsg("Vous utilisez "+skill.Name+"\n", 20, "default")
-							SpeedMsg("[COUP CRITIQUE] "+strconv.Itoa(degats)+" infligés à "+pseudoEnnemy+"\n", 20, "green")
-							fmt.Println("------------------------")
-							time.Sleep(1700 * time.Millisecond)
-							CurrentHpEnnemy -= degats
-							round = "client"
-							afficheMenuServer(p)
 						} else {
+							if poisonEnnemy > 0 {
+								fmt.Println("[POISON] Vous infligez 10 dégats supplémentaires")
+								degats += 10
+								poisonEnnemy -= 1
+							}
 							sendMessageToClient(clientConns, strconv.Itoa(degats)+"|false")
-							ClearConsole()
-							afficheHp(p, pseudoEnnemy, CurrentHpEnnemy, MaxHpEnnemy)
-							fmt.Println("----- A votre tour -----")
-							SpeedMsg("Vous utilisez "+skill.Name+"\n", 20, "default")
-							SpeedMsg(strconv.Itoa(degats)+" infligés à "+pseudoEnnemy+"\n", 20, "green")
-							fmt.Println("------------------------")
-							time.Sleep(1700 * time.Millisecond)
-							CurrentHpEnnemy -= degats
-							round = "client"
-							afficheMenuServer(p)
 						}
+
+						// Affichage des degats
+						if critBool {
+							SpeedMsg("[COUP CRITIQUE] "+strconv.Itoa(degats)+" infligés à "+pseudoEnnemy+"\n", 20, "green")
+						} else {
+							SpeedMsg(strconv.Itoa(degats)+" infligés à "+pseudoEnnemy+"\n", 20, "green")
+						}
+
+						fmt.Println("------------------------")
+						time.Sleep(1700 * time.Millisecond)
+						CurrentHpEnnemy -= degats
+						round = "client"
+						afficheMenuServer(p)
+
 					} else {
 						ClearConsole()
 						Red.Println("Vous ne pouvez plus utiliser cette compétence !")
@@ -434,15 +498,33 @@ func afficheMenuClient(p *Personnage) {
 					critic = 1
 				}
 				if critic == 1 {
+					if poisonEnnemy > 0 {
+						fmt.Println("[POISON] Vous infligez 10 dégats supplémentaires")
+						degats += 10
+						poisonEnnemy -= 1
+						poisonUsed = true
+					} else {
+						poisonUsed = false
+					}
 					sendMessageToServer(clientConns, strconv.Itoa(degats)+"|true")
 				} else {
+					if poisonEnnemy > 0 {
+						fmt.Println("[POISON] Vous infligez 10 dégats supplémentaires")
+						degats += 10
+						poisonEnnemy -= 1
+						poisonUsed = true
+					} else {
+						poisonUsed = false
+					}
 					sendMessageToServer(clientConns, strconv.Itoa(degats)+"|false")
 				}
 				ClearConsole()
 				afficheHp(p, pseudoEnnemy, CurrentHpEnnemy, MaxHpEnnemy)
 				fmt.Println("----- A votre tour -----")
 				SpeedMsg("Vous utilisez une attaque automatique\n", 20, "default")
-
+				if poisonUsed {
+					fmt.Println("[POISON] Vouq infligez 10 dégats supplémentaires")
+				}
 				if critic == 1 {
 					SpeedMsg("[COUP CRITIQUE] "+strconv.Itoa(degats)+" infligés à "+pseudoEnnemy+"\n", 20, "green")
 				} else {
@@ -454,6 +536,7 @@ func afficheMenuClient(p *Personnage) {
 				round = "server"
 				ClearConsole()
 				afficheMenuClient(p)
+
 			// Spells
 			case 2:
 				// Affichage des spells
@@ -485,32 +568,75 @@ func afficheMenuClient(p *Personnage) {
 						// La compétence est utilisée
 						degats = skill.Damages
 						p.skill[choice].StillUse -= 1
+						ClearConsole()
+						afficheHp(p, pseudoEnnemy, CurrentHpEnnemy, MaxHpEnnemy)
+						fmt.Println("----- A votre tour -----")
+						SpeedMsg("Vous utilisez "+skill.Name+"\n", 20, "default")
+
+						// Effets du spell
+
+						if choice == 1 { // Spell 1
+
+							if p.classe == "Arcaniste" { // Execution en dessous de 10%
+								if CurrentHpEnnemy <= MaxHpEnnemy/10 {
+									CurrentHpEnnemy = 0
+									degats = CurrentHpEnnemy
+								}
+
+							} else if p.classe == "Chasseur" { // Poison de 10 dégats
+								poisonEnnemy = 3
+
+							} else if p.classe == "Titan" { // Réduction des dégats
+								p.skill[4].Damages += 10
+								Green.Println("[BULLE] Vous obtenez 10% de chance de coup critique")
+							}
+
+						} else if choice == 2 {
+
+							if p.classe == "Chasseur" { // Damage reduce  + 20% auto
+								p.skill[0].Damages += p.skill[0].Damages / 5
+								Green.Println("[MAITRISE DU TERRAIN] Votre attaque automatique inflige 20% de dégats supplémentaires")
+							}
+
+						} else if choice == 3 { // Amélioration des dégats du spell 2
+
+							if p.classe == "Arcaniste" {
+								p.skill[2].Damages += p.skill[2].Damages / 2
+								Green.Println("[FOUDRE] Votre altération de l'âme inflige 50% de dégats supplémentaires")
+							}
+						}
+
+						// Envoi des degats
 						if critBool {
 							degats *= 2
+							if poisonEnnemy > 0 {
+								fmt.Println("[POISON] Vous infligez 10 dégats supplémentaires")
+								degats += 10
+								poisonEnnemy -= 1
+							}
 							sendMessageToServer(clientConns, strconv.Itoa(degats)+"|true")
-							ClearConsole()
-							afficheHp(p, pseudoEnnemy, CurrentHpEnnemy, MaxHpEnnemy)
-							fmt.Println("----- A votre tour -----")
-							SpeedMsg("Vous utilisez "+skill.Name+"\n", 20, "default")
-							SpeedMsg("[COUP CRITIQUE] "+strconv.Itoa(degats)+" infligés à "+pseudoEnnemy+"\n", 20, "green")
-							fmt.Println("------------------------")
-							time.Sleep(1700 * time.Millisecond)
-							CurrentHpEnnemy -= degats
-							round = "server"
-							afficheMenuClient(p)
 						} else {
-							sendMessageToClient(clientConns, strconv.Itoa(degats)+"|false")
-							ClearConsole()
-							afficheHp(p, pseudoEnnemy, CurrentHpEnnemy, MaxHpEnnemy)
-							fmt.Println("----- A votre tour -----")
-							SpeedMsg("Vous utilisez "+skill.Name+"\n", 20, "default")
-							SpeedMsg(strconv.Itoa(degats)+" infligés à "+pseudoEnnemy+"\n", 20, "green")
-							fmt.Println("------------------------")
-							time.Sleep(1700 * time.Millisecond)
-							CurrentHpEnnemy -= degats
-							round = "server"
-							afficheMenuClient(p)
+							if poisonEnnemy > 0 {
+								fmt.Println("[POISON] Vous infligez 10 dégats supplémentaires")
+								degats += 10
+								poisonEnnemy -= 1
+							}
+							sendMessageToServer(clientConns, strconv.Itoa(degats)+"|false")
 						}
+
+						// Affichage des degats
+
+						if critBool {
+							SpeedMsg("[COUP CRITIQUE] "+strconv.Itoa(degats)+" infligés à "+pseudoEnnemy+"\n", 20, "green")
+						} else {
+							SpeedMsg(strconv.Itoa(degats)+" infligés à "+pseudoEnnemy+"\n", 20, "green")
+						}
+						fmt.Println("------------------------")
+						time.Sleep(1700 * time.Millisecond)
+						CurrentHpEnnemy -= degats
+						round = "server"
+						afficheMenuClient(p)
+
 					} else {
 						ClearConsole()
 						Red.Println("Vous ne pouvez plus utiliser cette compétence !")
