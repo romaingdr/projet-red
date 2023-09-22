@@ -14,9 +14,11 @@ import (
 )
 
 var (
-	Red   = color.New(color.FgRed)
-	Blue  = color.New(color.FgBlue)
-	Green = color.New(color.FgGreen)
+	Red    = color.New(color.FgRed)
+	Blue   = color.New(color.FgBlue)
+	Green  = color.New(color.FgGreen)
+	Yellow = color.New(color.FgYellow)
+	Cyan   = color.New(color.FgCyan)
 )
 
 // clearConsole efface la console.

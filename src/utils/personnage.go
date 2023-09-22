@@ -48,7 +48,7 @@ func (p *Personnage) CreateCharacter() {
 			{"(%) Critical chance", "Chance d'obtenir un coup critique (inflige le double des dégats)", 10, -1, -1}}
 	}
 	ClearConsole()
-	p.Initialize(nom, classe, 7, hpMax, hpMax, []Item{{"Argent", 300}, {"Potions", 3}}, spells)
+	p.Initialize(nom, classe, 0, hpMax, hpMax, []Item{{"Argent", 300}, {"Potions", 3}}, spells)
 	SpeedMsg("Bienvenue, "+nom+" ! \n", 60, "blue")
 	fmt.Println()
 	fmt.Print("Appuyez pour entrer dans la partie")
@@ -90,9 +90,9 @@ func ChooseClass() string {
 			Red.Println("Veuillez saisir une option valide")
 			Blue.Println("Choisissez votre classe : ")
 			println("")
-			println("[1] Titan : a_completer")
-			println("[2] Arcaniste : a_completer")
-			println("[3] Chasseur : a_completer")
+			println("[1] Titan : «Une représentation de la force brute» | 180 Hp - 10 Ad")
+			println("[2] Arcaniste : «Manipule les lois de l'univers» | 100 Hp - 30 Ad")
+			println("[3] Chasseur : «N'apparait que dans l'ombre» | 125 Hp - 20 Ad")
 			println("")
 		}
 	}

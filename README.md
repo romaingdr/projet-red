@@ -14,12 +14,9 @@ Ce programme est un jeu de rôle textuel simple dans lequel vous créez un perso
 
 ## Dernier update
 
-- 3 spells pour chaque classe + auto + chance de crit
-- Statistiques du persos : ad / hp / critChance
-- Items : amélioration de l'ad et des hp
-- Premier combat : totalement fonctionnel + passe niveau 3
-- Limitation du nombre de spells utilisables par round
-- Full commentaires du code pour une plus claire compréhension
+- Ajout du mode Multijoueur - PvP
+- Ajout du mode Multijoueur - Objectifs
+- Ajout des touches de la manette
 
 ## Auteur(s)
 

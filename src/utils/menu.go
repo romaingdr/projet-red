@@ -4,6 +4,7 @@ package utils
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 )
 
@@ -29,8 +30,10 @@ func (p *Personnage) Menu() {
 	}
 	fmt.Println("[6] Multijoueur - PvP (BETA)")
 	fmt.Println("[7] Multijoueur - Objectifs (BETA)")
-	fmt.Println("[8] Quitter le jeu")
+	fmt.Println("[8] Touches - Manette")
+	fmt.Println("[9] Quitter le jeu")
 	fmt.Println("----------------")
+	fmt.Println("[10] Qui sont-ils | Bonus option")
 
 	choice, _ := Inputint()
 
@@ -78,16 +81,44 @@ func (p *Personnage) Menu() {
 	case 7:
 		ClearConsole()
 		multiObjectives(p)
-	// Ferme complétement le jeu
+
 	case 8:
 		ClearConsole()
-		Red.Println("Fermeture du jeu...")
+		affichageTouches(p)
+	// Ferme complétement le jeu
+	case 9:
+		ClearConsole()
+		os.Exit(0)
+	case 10:
+		ClearConsole()
+		Red.Println("QUI SONT-ILS ? : ABBA & Steven Spielberg")
+		p.Menu()
 	// Choix non proposé
 	default:
 		ClearConsole()
 		Red.Println("Veuillez saisir une donnée valide !")
 		p.Menu()
 	}
+}
+
+func affichageTouches(p *Personnage) {
+	ClearConsole()
+	Cyan.Println("----- Touches manette -----")
+	Red.Println("[○] - 0")
+	fmt.Println("[L1] - 1")
+	fmt.Println("[L2] - 2")
+	fmt.Println("[R1] - 3")
+	fmt.Println("[R2] - 4")
+	fmt.Println("[↑] - 5")
+	fmt.Println("[→] - 6")
+	fmt.Println("[↓] - 7")
+	fmt.Println("[←] - 8")
+	Green.Println("[∆] - 9")
+	Blue.Println("[x] - Entrée")
+	Yellow.Println("[□] - Supprimer")
+	fmt.Println("[L3] - Verrouill. Maj")
+	Cyan.Println("----------------------------")
+	p.Menu()
 }
 
 // accessInventory permet au joueur d'accéder à son inventaire.
