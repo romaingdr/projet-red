@@ -17,7 +17,7 @@ func (p *Personnage) CreateCharacter() {
 	nom = Input()
 	for !(OnlyLetters(nom)) {
 		ClearConsole()
-		Red.Println("Veuillez n'utiliser que des lettres | 10 caractères maximum")
+		Red.Println("Veuillez n'utiliser que des lettres | (3 - 10 caractères Max.)")
 		print("Nom de votre personnage ☛ ")
 		nom = Input()
 	}

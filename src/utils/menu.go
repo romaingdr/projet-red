@@ -30,7 +30,7 @@ func (p *Personnage) Menu() {
 	}
 	fmt.Println("[6] Multijoueur - PvP (BETA)")
 	fmt.Println("[7] Multijoueur - Objectifs (BETA)")
-	fmt.Println("[8] Touches - Manette")
+	fmt.Println("[8] Options de la manette")
 	fmt.Println("[9] Quitter le jeu")
 	fmt.Println("----------------")
 	fmt.Println("[10] Qui sont-ils | Bonus option")
@@ -85,6 +85,7 @@ func (p *Personnage) Menu() {
 	case 8:
 		ClearConsole()
 		affichageTouches(p)
+
 	// Ferme complétement le jeu
 	case 9:
 		ClearConsole()

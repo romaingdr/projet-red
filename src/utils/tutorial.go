@@ -9,7 +9,9 @@ func (p *Personnage) battleTutorial() {
 
 	// Affichage ligne par ligne du tutoriel
 	ClearConsole()
-	SpeedMsg("Bienvenue dans le tutoriel de combat !", 30, "blue")
+	SpeedMsg("Bienvenue dans le tutoriel de combat !\n", 20, "cyan")
+	SpeedMsg("Au cours de votre périple vous allez rencontrer beaucoup d'adversaires\n", 20, "cyan")
+	SpeedMsg("Alors voici un guide pour les affronter", 20, "cyan")
 	Input()
 	ClearConsole()
 	Red.Print("Ennemi 1 - 100 / 100")
@@ -19,28 +21,28 @@ func (p *Personnage) battleTutorial() {
 	SpeedMsg(" <-- Et ici les vôtres", 20, "white")
 	Input()
 	ClearConsole()
-	SpeedMsg("Le combat se joue en tour par tour", 20, "blue")
+	SpeedMsg("Le combat se joue en tour par tour", 20, "cyan")
 	fmt.Println("")
-	SpeedMsg("A chaque fois que vous jouez, plusieurs options s'offrent à vous : ", 20, "blue")
+	SpeedMsg("A chaque fois que vous jouez, plusieurs options s'offrent à vous : ", 20, "cyan")
 	fmt.Println("")
 
 	// Appel de BattleMenuTutoriel dans le package utils pour afficher le menu du joueur pendant le tutoriel
 	BattleMenuTutorial()
 
 	// Continue d'afficher chaque ligne du tutoriel
-	Input()
 	ClearConsole()
-	SpeedMsg("Lors de chaque attaque, vous verrez le nombre de dégats infligés : ", 20, "blue")
+	SpeedMsg("Lors de chaque attaque, vous verrez le nombre de dégats infligés comme ceci : \n", 20, "cyan")
 	fmt.Println()
-	Green.Print("Vous avez infligé 20 dégats à Ennemi 1")
+	Green.Print("Vous avez infligé 20 dégats à Ennemi 1 !")
 	Input()
 	ClearConsole()
-	SpeedMsg("Mais vous pouvez également en recevoir : ", 20, "blue")
+	SpeedMsg("⚠ Mais vous pouvez également en recevoir : ", 20, "cyan")
 	fmt.Println()
 	Red.Print("Vous avez reçu 50 dégats (coup critique) de Ennemi 1 !")
 	Input()
 	ClearConsole()
-	SpeedMsg("Lors de votre tour, vous pourrez également utiliser vos abilités : ", 20, "blue")
+	SpeedMsg("Lors de votre tour, vous pourrez également utiliser vos abilités \n", 20, "cyan")
+	SpeedMsg("Chaque classe est unique et contient 3 abilités aux caractéristiques dfférentes\n", 20, "cyan")
 	fmt.Println("")
 
 	// Choix du spell par le biais de AbilitiesTutorial qui affiche les spells et demande d'en choisir un
@@ -50,13 +52,14 @@ func (p *Personnage) battleTutorial() {
 	SpeedMsg(spell+" à infligé 50 dégats à Ennemi 1", 20, "green")
 	Input()
 	ClearConsole()
-	SpeedMsg("Félicitation, vous êtes prêt pour votre premier combat ! Bonne chance", 20, "blue")
+	SpeedMsg("Félicitation, vous savez tout !\n", 20, "default")
+	SpeedMsg("Vous êtes enfin prêt pour rejoindre l'aventure ! Bonne chance", 20, "default")
 	Input()
 	ClearConsole()
 
 	// Passage niveau 2 à la fin du tutoriel
 	p.niveau = 1
-	Blue.Println("Vous avez atteint le niveau 2 !")
+	Blue.Println("Vous avez atteint le premier niveau !")
 
 	// Retour au menu
 	p.Menu()
@@ -94,8 +97,5 @@ func BattleMenuTutorial() {
 	fmt.Print("[2] Abilités")
 	SpeedMsg("<-- Ceci vous permet d'utiliser une abilité sur l'adversaire", 20, "white")
 	Input()
-	fmt.Print("[3] Inventaire")
-	SpeedMsg("<-- Ceci vous permet de consulter votre inventaire pendant le combat", 20, "white")
-	fmt.Println("")
 	fmt.Println("------------------------")
 }

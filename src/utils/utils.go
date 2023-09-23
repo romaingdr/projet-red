@@ -49,7 +49,7 @@ func Input() string {
 
 // onlyLetters vérifie si une chaîne de caractères ne contient que des lettres.
 func OnlyLetters(input string) bool {
-	if len(input) > 10 {
+	if len(input) > 10 || len(input) < 3 {
 		return false
 	}
 	for _, char := range input {
@@ -81,6 +81,8 @@ func SpeedMsg(message string, speed int, colorName string) {
 		selectedColor = Red
 	case "blue":
 		selectedColor = Blue
+	case "cyan":
+		selectedColor = Cyan
 	default:
 		selectedColor = defaultColor
 	}
