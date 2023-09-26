@@ -90,7 +90,7 @@ func (p *Personnage) Menu() {
 		os.Exit(0)
 	case 10:
 		ClearConsole()
-		Red.Println("QUI SONT-ILS ? : ABBA & Steven Spielberg")
+		Red.Println("QUI SONT-ILS ? : ABBA | Steven Spielberg | Queen")
 		p.Menu()
 	// Choix non proposé
 	default:
