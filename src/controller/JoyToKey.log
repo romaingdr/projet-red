@@ -1,0 +1,47 @@
+2023/09/26 01:32:58.574 Info   Starting JoyToKey v6.9.2
+2023/09/26 01:32:58.574 Info   ExeFile = C:\Users\romgo\OneDrive\Documents\projet-red\src\controller\JoyToKey.exe
+2023/09/26 01:32:58.574 Info   Args = C:\Users\romgo\OneDrive\Documents\projet-red\src\controller\JoyToKey.exe
+2023/09/26 01:32:58.574 Info   DataDirectory = C:\Users\romgo\OneDrive\Documents\projet-red\src\controller\
+2023/09/26 01:32:58.574 Info   Profile = 
+2023/09/26 01:32:58.574 Info   IniFile = C:\Users\romgo\OneDrive\Documents\projet-red\src\controller\JoyToKey.ini
+2023/09/26 01:32:58.574 Info   Loading ini file: C:\Users\romgo\OneDrive\Documents\projet-red\src\controller\JoyToKey.ini (AppInfo.cpp#259)
+2023/09/26 01:32:58.575 Info   LicenseKey "" is not valid
+2023/09/26 01:32:58.654 Info   Loading XInput1_3.dll (Joystick.cpp#158)
+2023/09/26 01:32:58.655 Info   Initialized XInput (Joystick.cpp#180)
+2023/09/26 01:32:58.671 Info   Initialized DirectInput (Joystick.cpp#193)
+2023/09/26 01:32:58.671 Info   Loading hid.dll (JoystickHID.h#58)
+2023/09/26 01:32:58.672 Info   Initialized HID (Joystick.cpp#202)
+2023/09/26 01:32:58.690 Info   Detected a DI joystick: Wireless Controller, Wireless Controller, 0CE6054C, {ECC7F310-501B-11EE-8001-444553540000}
+2023/09/26 01:32:58.691 Info   numAxis = 6
+2023/09/26 01:32:58.691 Info   numPOVs = 1
+2023/09/26 01:32:58.691 Info   numButtons = 15
+2023/09/26 01:32:58.692 Info   EnumDeviceObject: Axis offset=0 type=402 name=Rotation Y
+2023/09/26 01:32:58.692 Info   EnumDeviceObject: Axis offset=4 type=302 name=Rotation X
+2023/09/26 01:32:58.692 Info   EnumDeviceObject: Axis offset=8 type=502 name=Rotation Z
+2023/09/26 01:32:58.692 Info   EnumDeviceObject: Axis offset=12 type=202 name=Axe Z
+2023/09/26 01:32:58.692 Info   EnumDeviceObject: Axis offset=16 type=102 name=Axe Y
+2023/09/26 01:32:58.692 Info   EnumDeviceObject: Axis offset=20 type=2 name=Axe X
+2023/09/26 01:32:58.699 Info   DetectJoysticks: Detected 1 DI joystick(s)
+2023/09/26 01:32:58.701 Info   Joystick #1: Wireless Controller
+2023/09/26 01:32:58.701 Info   1 joystick(s) are detected (Joystick.cpp#283)
+2023/09/26 01:32:58.701 Info   1 joysticks are detected (Joystick.cpp#215)
+2023/09/26 01:32:58.701 Info   ConfigDir=C:\Users\romgo\OneDrive\Documents\projet-red\src\controller\*.cfg (ConfigFileManager.cpp#43)
+2023/09/26 01:32:58.703 Info   Failed to find AppLink.dat (AppLink\AppLinkManager.cpp#32)
+2023/09/26 01:32:58.722 Info   TimerInit: Initializing timer with x1 speed mode (interval = 16 msec)
+2023/09/26 01:32:58.867 Info   Detected a DI joystick: Wireless Controller, Wireless Controller, 0CE6054C, {ECC7F310-501B-11EE-8001-444553540000}
+2023/09/26 01:32:58.868 Info   numAxis = 6
+2023/09/26 01:32:58.868 Info   numPOVs = 1
+2023/09/26 01:32:58.868 Info   numButtons = 15
+2023/09/26 01:32:58.868 Info   EnumDeviceObject: Axis offset=0 type=402 name=Rotation Y
+2023/09/26 01:32:58.868 Info   EnumDeviceObject: Axis offset=4 type=302 name=Rotation X
+2023/09/26 01:32:58.868 Info   EnumDeviceObject: Axis offset=8 type=502 name=Rotation Z
+2023/09/26 01:32:58.868 Info   EnumDeviceObject: Axis offset=12 type=202 name=Axe Z
+2023/09/26 01:32:58.868 Info   EnumDeviceObject: Axis offset=16 type=102 name=Axe Y
+2023/09/26 01:32:58.868 Info   EnumDeviceObject: Axis offset=20 type=2 name=Axe X
+2023/09/26 01:32:58.874 Info   DetectJoysticks: Detected 1 DI joystick(s)
+2023/09/26 01:32:58.875 Info   Joystick #1: Wireless Controller
+2023/09/26 01:32:58.875 Info   1 joystick(s) are detected (Joystick.cpp#283)
+2023/09/26 01:35:24.600 Info   Save config file "minecraft" (ConfigFileManager.cpp#425)
+2023/09/26 01:36:09.002 Info   Save config file "minecraft" (ConfigFileManager.cpp#425)
+2023/09/26 01:41:51.525 Info   Save config file "minecraft" (ConfigFileManager.cpp#425)
+2023/09/26 01:53:32.607 Info   Application terminated (Utils\LogFile.cpp#20)

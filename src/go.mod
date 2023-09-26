@@ -10,6 +10,7 @@ require (
 
 require (
 	github.com/StackExchange/wmi v1.2.1 // indirect
+	github.com/faiface/beep v1.1.0 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/go-vgo/robotgo v0.100.10 // indirect
 	github.com/lxn/win v0.0.0-20210218163916-a377121e959e // indirect

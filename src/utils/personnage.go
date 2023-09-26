@@ -49,9 +49,11 @@ func (p *Personnage) CreateCharacter() {
 	}
 	ClearConsole()
 	p.Initialize(nom, classe, 0, hpMax, hpMax, []Item{{"Argent", 300}, {"Potions", 3}}, spells)
-	SpeedMsg("Bienvenue, "+nom+" ! \n", 60, "blue")
+	SpeedMsg("Bienvenue, "+nom+" ! \n", 60, "cyan")
 	fmt.Println()
 	fmt.Print("Appuyez pour entrer dans la partie")
+	p.addInventory("Plume de corbeau", 1)
+	p.addInventory("Cuir de sanglier", 1)
 	Input()
 	ClearConsole()
 	p.Menu()
@@ -72,8 +74,7 @@ func (p *Personnage) Initialize(nom string, classe string, niveau int, hp int, h
 func ChooseClass() string {
 	ClearConsole()
 
-	Green.Println("Nom du personnage validé !")
-	Blue.Println("Choisissez votre classe : ")
+	Cyan.Println("Choisissez votre classe : ")
 	classes := []string{"Titan", "Arcaniste", "Chasseur"}
 	println("")
 	println("[1] Titan : «Une représentation de la force brute» | 180 Hp - 10 Ad")
@@ -88,7 +89,7 @@ func ChooseClass() string {
 		} else {
 			ClearConsole()
 			Red.Println("Veuillez saisir une option valide")
-			Blue.Println("Choisissez votre classe : ")
+			Cyan.Println("Choisissez votre classe : ")
 			println("")
 			println("[1] Titan : «Une représentation de la force brute» | 180 Hp - 10 Ad")
 			println("[2] Arcaniste : «Manipule les lois de l'univers» | 100 Hp - 30 Ad")

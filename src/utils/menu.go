@@ -1,5 +1,4 @@
 // FICHIER UTILISE POUR LA GESTION DU MENU ET DE SES SOUS MENUS
-
 package utils
 
 import (
@@ -10,9 +9,8 @@ import (
 
 // Menu affiche le menu principal du jeu.
 func (p *Personnage) Menu() {
-
 	// Affichage des choix du menu
-	fmt.Println("----- Menu -----")
+	Cyan.Println("----- Menu -----")
 	fmt.Println("[1] Personnage")
 	fmt.Println("[2] Inventaire")
 	fmt.Println("[3] Marchand")
@@ -28,11 +26,11 @@ func (p *Personnage) Menu() {
 			fmt.Println("[5] fin ?")
 		}
 	}
-	fmt.Println("[6] Multijoueur - PvP (BETA)")
-	fmt.Println("[7] Multijoueur - Objectifs (BETA)")
-	fmt.Println("[8] Options de la manette")
+	fmt.Println("[6] Forgeron")
+	fmt.Println("[7] Multijoueur - PvP")
+	fmt.Println("[8] Multijoueur - Objectifs")
 	fmt.Println("[9] Quitter le jeu")
-	fmt.Println("----------------")
+	Cyan.Println("----------------")
 	fmt.Println("[10] Qui sont-ils | Bonus option")
 
 	choice, _ := Inputint()
@@ -76,15 +74,15 @@ func (p *Personnage) Menu() {
 	// Lance le mode multijoueur PvP
 	case 6:
 		ClearConsole()
-		MultiStartScreen(p)
+		p.forgeron()
 
 	case 7:
 		ClearConsole()
-		multiObjectives(p)
+		MultiStartScreen(p)
 
 	case 8:
 		ClearConsole()
-		affichageTouches(p)
+		multiObjectives(p)
 
 	// Ferme complétement le jeu
 	case 9:
@@ -102,37 +100,106 @@ func (p *Personnage) Menu() {
 	}
 }
 
-func affichageTouches(p *Personnage) {
-	ClearConsole()
-	Cyan.Println("----- Touches manette -----")
-	Red.Println("[○] - 0")
-	fmt.Println("[L1] - 1")
-	fmt.Println("[L2] - 2")
-	fmt.Println("[R1] - 3")
-	fmt.Println("[R2] - 4")
-	fmt.Println("[↑] - 5")
-	fmt.Println("[→] - 6")
-	fmt.Println("[↓] - 7")
-	fmt.Println("[←] - 8")
-	Green.Println("[∆] - 9")
-	Blue.Println("[x] - Entrée")
-	Yellow.Println("[□] - Supprimer")
-	fmt.Println("[L3] - Verrouill. Maj")
-	Cyan.Println("----------------------------")
-	p.Menu()
+func (p *Personnage) forgeron() {
+	outilsMarchand := [][]string{
+		{"Chapeau de l'aventurier", "Plume de corbeau", "Cuir de sanglier"},
+		{"Tunique de l'aventurier", "Fourrure de loup", "Peau de troll"},
+		{"Bottes de l'aventurier", "Fourrure de loup", "Cuir de sanglier"},
+	}
+
+	Cyan.Println("---- Items à forger ----")
+	for i := 0; i < len(outilsMarchand); i++ {
+		if p.findIndex(outilsMarchand[i][0]) != -1 {
+			Cyan.Println(outilsMarchand[i][0] + " - Acheté !")
+		} else {
+			fmt.Print("[" + strconv.Itoa(i+1) + "] - " + outilsMarchand[i][0] + " : ")
+			for y := 1; y < len(outilsMarchand[i]); y++ {
+				if p.findIndex(outilsMarchand[i][y]) != -1 {
+					Green.Print(outilsMarchand[i][y])
+					fmt.Print(", ")
+				} else {
+					Red.Print(outilsMarchand[i][y])
+					fmt.Print(", ")
+				}
+			}
+			fmt.Println("")
+		}
+	}
+	Cyan.Println("------------------------")
+	fmt.Println("[" + strconv.Itoa(len(outilsMarchand)+1) + "] - Sortir")
+	Cyan.Println("Chaque forge d'item coûte 5 coros !")
+	choice, _ := Inputint()
+	var itemsRequis []string
+	switch {
+	case choice > 0 && choice < len(outilsMarchand):
+		peutBuild := true
+		if p.findIndex(outilsMarchand[choice-1][0]) == -1 {
+			if p.enoughMoney(5) {
+				itemsRequis = outilsMarchand[choice-1][1:]
+				for i := 0; i < len(itemsRequis); i++ {
+					requis := itemsRequis[i]
+					if p.findIndex(requis) == -1 {
+						ClearConsole()
+						Red.Println("Vous n'avez pas les composants nécessaires ! (" + requis + ")")
+						peutBuild = false
+						p.forgeron()
+					}
+				}
+			} else {
+				peutBuild = false
+				ClearConsole()
+				Red.Println("Vous n'avez pas assez d'argent !")
+				p.forgeron()
+			}
+		} else {
+			peutBuild = false
+			ClearConsole()
+			Red.Println("Vous avez déjà acheté cet item !")
+			p.forgeron()
+		}
+
+		if peutBuild {
+			// ajoute l'item
+			p.addInventory(outilsMarchand[choice-1][0], 1)
+
+			// supprimer ses composants
+			for i := 0; i < len(itemsRequis); i++ {
+				requis := itemsRequis[i]
+				indice := p.findIndex(requis)
+				fmt.Println(indice)
+				p.inventory = append(p.inventory[:indice], p.inventory[indice+1:]...)
+				fmt.Println(p.inventory)
+
+			}
+
+			// enlever l'argent
+			p.removeInventory("Argent", 5)
+
+			ClearConsole()
+			Green.Println("Vous avez acheté " + outilsMarchand[choice-1][0])
+			p.forgeron()
+		}
+	case choice == len(outilsMarchand)+1:
+		ClearConsole()
+		p.Menu()
+	default:
+		ClearConsole()
+		Red.Println("Veuillez saisir une donnée valide")
+		p.forgeron()
+	}
 }
 
 // accessInventory permet au joueur d'accéder à son inventaire.
 func (p *Personnage) accessInventory() {
 
 	// Affichage de l'inventaire
-	fmt.Println("Item            Quantité")
-	fmt.Println("---------------------------")
+	Cyan.Println("Item            Quantité")
+	Cyan.Println("---------------------------")
 	for _, item := range p.inventory {
 		// Utilisation de fmt.Printf pour aligner les colonnes
 		fmt.Printf("%-20s %-7d\n", item.Name, item.Quantite)
 	}
-	fmt.Println("---------------------------")
+	Cyan.Println("---------------------------")
 	fmt.Println("[1] Utiliser une potion")
 	fmt.Println("[2] Quitter l'inventaire")
 	choice, _ := Inputint()
@@ -159,23 +226,23 @@ func (p *Personnage) accessInventory() {
 // showSkills affiche les abilités du personnage.
 func (p *Personnage) showSkills() {
 	// Affichage des sorts du personnage
-	fmt.Printf("%-20s%-10s%-60s\n", "Nom", "Dégâts", "Description")
-	fmt.Println("------------------------------------------------------------------")
+	Cyan.Printf("%-20s%-10s%-60s\n", "Nom", "Dégâts", "Description")
+	Cyan.Println("------------------------------------------------------------------")
 
 	for _, spell := range p.skill {
 		fmt.Printf("%-20s%-10d%-60s\n", spell.Name, spell.Damages, spell.Description)
 	}
-	fmt.Println("-------------------------------------------------------------------------------------------")
+	Cyan.Println("-------------------------------------------------------------------------------------------")
 }
 
 // displayInfo affiche les informations du personnage.
 func (p *Personnage) displayInfo() {
-	fmt.Println("--- ", p.nom, " ---")
+	Cyan.Println("--- ", p.nom, " ---")
 	fmt.Println("Classe : ", p.classe)
 	fmt.Println("Niveau : ", p.niveau)
 	fmt.Println("Ennemis battus : " + strconv.Itoa(p.ennemi) + " /3")
 	fmt.Println("Points de vie : ", p.currentHp, "/", p.maxHP)
-	fmt.Println("--------------")
+	Cyan.Println("--------------")
 }
 
 // Marchand permet au joueur d'interagir avec le marchand.
@@ -194,16 +261,16 @@ func (p *Personnage) Marchand() {
 	// Affichage des items que vend le marchand
 	for {
 		Green.Println("Argent :  ", p.nbItem("Argent"))
-		fmt.Println("    Article             Prix                Description")
-		fmt.Println("-----------------------------------------------------")
+		Cyan.Println("    Article             Prix                Description")
+		Cyan.Println("-----------------------------------------------------")
 		for i, item := range itemMarchand {
 			if p.alreadyBuy(item.Name) && item.Unique == true {
-				Blue.Printf("%s - acheté !\n", item.Name)
+				Cyan.Printf("%s - acheté !\n", item.Name)
 			} else {
 				fmt.Printf("[%d] %-20s %-7d %-s\n", i+1, item.Name, item.Price, item.Description)
 			}
 		}
-		fmt.Println("-----------------------------------------------------")
+		Cyan.Println("-----------------------------------------------------")
 		fmt.Printf("[%d] Sortir \n", len(itemMarchand)+1)
 		choice, _ := Inputint()
 
@@ -223,7 +290,7 @@ func (p *Personnage) Marchand() {
 					}
 					p.maxHP += selectedItem.Health     // On ajoute la vie que donne l'item sur les hp max
 					p.currentHp += selectedItem.Health // On ajoute la vie que donne l'item sur les hp actuels
-					Blue.Printf("Vous avez acheté : %s pour %d coro !\n", selectedItem.Name, selectedItem.Price)
+					Cyan.Printf("Vous avez acheté : %s pour %d coro !\n", selectedItem.Name, selectedItem.Price)
 				} else { // Item déjà acheté
 					ClearConsole()
 					Red.Println("Vous avez déjà acheté cet item")
@@ -235,7 +302,6 @@ func (p *Personnage) Marchand() {
 
 		} else if choice == len(itemMarchand)+1 { // Choix de sortie du marchand
 			ClearConsole()
-			Blue.Println("Sortie du marchand")
 			p.Menu()
 			break
 		} else { // Choix non proposé

@@ -75,9 +75,15 @@ func multiObjectives(p *Personnage) {
 	switch choice {
 	case 1:
 		ClearConsole()
-		fmt.Print("Nombre de joueurs : ")
+		fmt.Print("Nombre de joueurs (2 - 9 Max.): ")
 		nbPlayers, _ = Inputint()
-		createParty(p)
+		if nbPlayers < 2 || nbPlayers > 9 {
+			ClearConsole()
+			Red.Println("Le mode objectif se joue entre 2 et 9 joueurs seulement !")
+			multiObjectives(p)
+		} else {
+			createParty(p)
+		}
 	case 2:
 		ClearConsole()
 		joinParty(p)
