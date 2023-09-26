@@ -1,4 +1,2 @@
-- Ajout du lore entre les niveaux
-- Changement des hp des ennemis
 - Changements des récompenses récupérées
 - Applicatin du forgeron dans le jeu (drop d'item / avantages de forge)

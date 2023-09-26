@@ -68,7 +68,7 @@ func CapitalizeString(input string) string {
 	return input
 }
 
-// speedMsg affiche un message lettre par lettre avec une couleur spécifiée.
+// message : ton message , speed : la vitesse (met sur 20), colorName : la couleur que tu veux (red, green, blue, cyan, yellow)
 func SpeedMsg(message string, speed int, colorName string) {
 	defaultColor := color.New(color.FgWhite)
 
@@ -83,6 +83,8 @@ func SpeedMsg(message string, speed int, colorName string) {
 		selectedColor = Blue
 	case "cyan":
 		selectedColor = Cyan
+	case "yellow":
+		selectedColor = Yellow
 	default:
 		selectedColor = defaultColor
 	}

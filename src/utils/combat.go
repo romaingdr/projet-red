@@ -5,7 +5,6 @@ package utils
 import (
 	"fmt"
 	"math/rand"
-	"os"
 	"strconv"
 	"time"
 )
@@ -25,31 +24,27 @@ var (
 		{
 			{"Bat 1", 350, 350, 20, 50, 25, false},
 			{"Bat 2", 350, 350, 20, 50, 25, false},
-			{"Donuts man", 550, 550, 20, 50, 40, true},
+			{"Fallen king", 550, 550, 20, 50, 40, true},
 		},
 
 		{
-			{"Mosquito", 200, 200, 20, 50, 80, false},
-			{"Snail", 700, 700, 20, 50, 15, false},
+			{"Snail", 200, 200, 20, 50, 80, false},
+			{"Mosquito", 700, 700, 20, 50, 15, false},
 			{"Wasp", 600, 600, 20, 50, 60, true},
 		},
 
 		{
-			{"Eveel 1", 750, 750, 20, 50, 60, false},
-			{"Eveel 2", 750, 750, 20, 50, 60, false},
-			{"Mermaid duo", 900, 900, 20, 50, 70, true},
+			{"Dolphin", 750, 750, 20, 50, 60, false},
+			{"Shark", 750, 750, 20, 50, 60, false},
+			{"Mermaid", 900, 900, 20, 50, 70, true},
 		},
 
 		{
-			{"The key master 1", 1300, 1300, 20, 50, 80, false},
-			{"The key master 2", 1300, 1300, 20, 50, 80, false},
 			{"The general", 1700, 1700, 20, 50, 80, true},
 		},
 
 		{
-			{"Alien 1", 700, 700, 60, 120, 70, false},
-			{"Alien 2", 700, 700, 60, 120, 70, false},
-			{"Fallen garden", 2500, 2500, 60, 120, 100, true},
+			{"UNIVERSE MASTER", 700, 700, 60, 120, 70, false},
 		},
 	}
 )
@@ -59,16 +54,13 @@ func (p *Personnage) battle() {
 	ClearConsole()
 	Script(p)
 	ClearConsole()
-	if p.niveau == 7 { // LE JEU EST TERMINE
-		SpeedMsg("Félicitation "+p.nom+"\n", 30, "blue")
-		time.Sleep(2 * time.Second)
-		SpeedMsg("Vous avez battu tout les ennemis\n", 20, "blue")
-		time.Sleep(1 * time.Second)
-		SpeedMsg("Merci d'avoir joué à notre jeu !\n", 20, "blue")
-		time.Sleep(1 * time.Second)
-		SpeedMsg("En esperant vous revoir bientôt !", 30, "blue")
-		Input()
-		os.Exit(0)
+	if p.niveau == 7 { // LE JEU EST SUR LA DERNIERE CINEMATIQUE
+		finalChoice(p)
+	}
+	if p.niveau > 7 { // Jeu terminé
+		ClearConsole()
+		Green.Println("Vous avez terminé le jeu !")
+		p.Menu()
 	}
 	// Sauvegarde des spells qui changent
 

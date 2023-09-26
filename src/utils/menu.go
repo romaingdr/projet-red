@@ -14,24 +14,27 @@ func (p *Personnage) Menu() {
 	fmt.Println("[1] Personnage")
 	fmt.Println("[2] Inventaire")
 	fmt.Println("[3] Marchand")
-	fmt.Println("[4] Abilités")
+	fmt.Println("[4] Forgeron")
+	fmt.Println("[5] Abilités")
 	if p.niveau == 0 {
-		fmt.Println("[5] Tutoriel")
+		fmt.Println("[6] Tutoriel")
 	} else if p.niveau == 1 && p.ennemi == 0 {
-		fmt.Println("[5] Commencer l'histoire")
+		fmt.Println("[6] Commencer l'histoire")
 	} else {
 		if p.niveau < 7 {
-			fmt.Println("[5] continuer l'histoire")
+			fmt.Println("[6] continuer l'histoire")
+		} else if p.niveau == 7 {
+			fmt.Println("[6] fin ?")
 		} else {
-			fmt.Println("[5] fin ?")
+			Green.Println("[✔] Jeu terminé")
 		}
 	}
-	fmt.Println("[6] Forgeron")
-	fmt.Println("[7] Multijoueur - PvP")
-	fmt.Println("[8] Multijoueur - Objectifs")
-	fmt.Println("[9] Quitter le jeu")
+	fmt.Println("[7] Avancement")
+	fmt.Println("[8] Multijoueur - PvP")
+	fmt.Println("[9] Multijoueur - Objectifs")
+	fmt.Println("[10] Quitter le jeu")
 	Cyan.Println("----------------")
-	fmt.Println("[10] Qui sont-ils | Bonus option")
+	fmt.Println("[11] Qui sont-ils | Bonus option")
 
 	choice, _ := Inputint()
 
@@ -59,11 +62,15 @@ func (p *Personnage) Menu() {
 	// Affichage des abilités
 	case 4:
 		ClearConsole()
-		p.showSkills()
-		p.Menu()
+		p.forgeron()
 
 	// Combat tutoriel si niveau 1 sinon menu de combat
 	case 5:
+		ClearConsole()
+		p.showSkills()
+		p.Menu()
+
+	case 6:
 		ClearConsole()
 		if p.niveau == 0 {
 			p.battleTutorial()
@@ -71,24 +78,19 @@ func (p *Personnage) Menu() {
 			p.battle()
 		}
 
-	// Lance le mode multijoueur PvP
-	case 6:
-		ClearConsole()
-		p.forgeron()
-
 	case 7:
 		ClearConsole()
-		MultiStartScreen(p)
-
+		avancement(p)
 	case 8:
 		ClearConsole()
-		multiObjectives(p)
-
-	// Ferme complétement le jeu
+		MultiStartScreen(p)
 	case 9:
 		ClearConsole()
-		os.Exit(0)
+		multiObjectives(p)
 	case 10:
+		ClearConsole()
+		os.Exit(0)
+	case 11:
 		ClearConsole()
 		Red.Println("QUI SONT-ILS ? : ABBA | Steven Spielberg | Queen")
 		p.Menu()
@@ -98,6 +100,39 @@ func (p *Personnage) Menu() {
 		Red.Println("Veuillez saisir une donnée valide !")
 		p.Menu()
 	}
+}
+
+func avancement(p *Personnage) {
+	fmt.Println("  -------------------")
+	fmt.Println(" 🔫 -  World War 3")
+	fmt.Println("  |    Basic Soldier 1")
+	fmt.Println("  |    Basic Soldier 2")
+	fmt.Println("  |    RED SOLDIER")
+	fmt.Println("  | ")
+	fmt.Println(" 🏰  -  Chateau")
+	fmt.Println("  |    Bat 1")
+	fmt.Println("  |    Bat 2")
+	fmt.Println("  |    FALLEN KING")
+	fmt.Println("  | ")
+	fmt.Println(" 🌱  -  Jardin")
+	fmt.Println("  |    Snail")
+	fmt.Println("  |    Mosquito")
+	fmt.Println("  |    Wasp")
+	fmt.Println("  | ")
+	fmt.Println(" 💧  -  Ville sous marine")
+	fmt.Println("  |    Dolphin")
+	fmt.Println("  |    Shark")
+	fmt.Println("  |    Mermaid")
+	fmt.Println("  | ")
+	fmt.Println(" 🛸 -  Starship")
+	fmt.Println("  |   ")
+	fmt.Println(" 🪐  - Uranus")
+	fmt.Println("  -----------------------")
+	fmt.Print("appuyez sur entrée pour continuer")
+	Input()
+	ClearConsole()
+	p.Menu()
+
 }
 
 func (p *Personnage) forgeron() {
@@ -237,9 +272,10 @@ func (p *Personnage) showSkills() {
 
 // displayInfo affiche les informations du personnage.
 func (p *Personnage) displayInfo() {
+	niveaux := []string{"Tutoriel", "World War 3", "Château", "Jardin", "Ville sous-marine", "Starship", "Uranus"}
 	Cyan.Println("--- ", p.nom, " ---")
 	fmt.Println("Classe : ", p.classe)
-	fmt.Println("Niveau : ", p.niveau)
+	fmt.Println("Niveau : ", p.niveau, "("+niveaux[p.niveau]+")")
 	fmt.Println("Ennemis battus : " + strconv.Itoa(p.ennemi) + " /3")
 	fmt.Println("Points de vie : ", p.currentHp, "/", p.maxHP)
 	Cyan.Println("--------------")
