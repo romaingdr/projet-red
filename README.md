@@ -17,7 +17,8 @@ Ce programme est un jeu de rôle textuel simple dans lequel vous créez un perso
 - Ajout du mode Multijoueur - PvP
 - Ajout du mode Multijoueur - Objectifs
 - Ajout des touches de la manette
+- Ajout du Forgeron et des items craftables.
 
 ## Auteur(s)
 
-romaingdr && avvrt
+romaingdr && CorentinDpz
