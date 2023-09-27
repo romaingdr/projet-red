@@ -1,2 +1,0 @@
-- Changements des récompenses récupérées
-- Applicatin du forgeron dans le jeu (drop d'item / avantages de forge)

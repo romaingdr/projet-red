@@ -16,9 +16,9 @@ var (
 	// Listes des ennemis rencontrés durant le jeu
 	Monstres = [][]Ennemy{
 		{
-			{"Basic soldier 1", 200, 200, 20, 50, 25, false},
-			{"Basic soldier 2", 200, 200, 20, 50, 25, false},
-			{"Red soldier", 300, 300, 20, 50, 25, true},
+			{"Basic soldier 1", 1, 200, 20, 50, 25, false},
+			{"Basic soldier 2", 1, 200, 20, 50, 25, false},
+			{"Red soldier", 1, 300, 20, 50, 25, true},
 		},
 
 		{
@@ -45,6 +45,40 @@ var (
 
 		{
 			{"UNIVERSE MASTER", 700, 700, 60, 120, 70, false},
+		},
+	}
+
+	dropItems = [][]string{
+		{
+			"Arme de soldat",
+			"Casque de soldat",
+			"Légion militaire",
+		},
+
+		{
+			"Ailes de chauve souris",
+			"Dents de chauve souris",
+			"Couronne royale",
+		},
+
+		{
+			"Coquille d'escargot",
+			"Fiole de venin",
+			"Dar royal",
+		},
+
+		{
+			"Queue du dauphin",
+			"Dent de la mer",
+			"Trident empoisonné",
+		},
+
+		{
+			"Faille temporelle",
+		},
+
+		{
+			"Couronne de l'univers",
 		},
 	}
 )
@@ -121,11 +155,13 @@ func (p *Personnage) battle() {
 		time.Sleep(1 * time.Second)
 		SpeedMsg("+ 3 Potions\n", 30, "blue")
 		time.Sleep(1 * time.Second)
-		SpeedMsg("+ 1 Niveau\n", 30, "blue")
+		itemGagne := dropItems[p.niveau-1][p.ennemi]
+		SpeedMsg("+ 1 "+itemGagne+"\n", 30, "blue")
 
 		// Attribution des récompenses
 		p.addInventory("Potions", 3)
 		p.addInventory("Argent", 300)
+		p.addInventory(itemGagne, 1)
 
 		if ennemi1.IsBoss {
 			p.niveau += 1

@@ -24,20 +24,20 @@ type Spell struct {
 
 // Personnage structure
 type Personnage struct {
-	nom       string
-	classe    string
-	niveau    int
-	ennemi    int
-	currentHp int
-	maxHP     int
-	inventory []Item
+	nom       string `json:"nom"`
+	classe    string `json:"classe"`
+	niveau    int    `json:"niveau"`
+	ennemi    int    `json:"ennemi"`
+	currentHp int    `json:"currentHp"`
+	maxHP     int    `json:"maxHP"`
+	inventory []Item `json:"inventory"`
 	skill     []Spell
 }
 
 // Item structure
 type Item struct {
-	Name     string
-	Quantite int
+	Name     string `json:"name"`
+	Quantite int    `json:"quantite"`
 }
 
 // Article structure

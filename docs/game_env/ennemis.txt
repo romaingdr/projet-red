@@ -1,0 +1,34 @@
+ennemies :
+
+LVL 1 :
+
+Basic soldier 1
+Basic soldier 2
+Red soldier
+
+LVL 2 :
+
+Bat 1
+Bat 2
+Fallen king
+
+LVL 3 :
+
+Snail
+Mosquito
+Wasp
+
+LVL 4 :
+
+Dolphin
+Shark
+Mermaid
+
+LVL 5 :
+
+The general
+
+LVL 6 :
+
+Universe master
+

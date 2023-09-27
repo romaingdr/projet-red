@@ -3,13 +3,13 @@ package utils
 
 import (
 	"fmt"
+	_ "github.com/mattn/go-sqlite3"
 	"os"
 	"strconv"
 )
 
 // Menu affiche le menu principal du jeu.
 func (p *Personnage) Menu() {
-	// Affichage des choix du menu
 	Cyan.Println("----- Menu -----")
 	fmt.Println("[1] Personnage")
 	fmt.Println("[2] Inventaire")
@@ -137,9 +137,10 @@ func avancement(p *Personnage) {
 
 func (p *Personnage) forgeron() {
 	outilsMarchand := [][]string{
-		{"Chapeau de l'aventurier", "Plume de corbeau", "Cuir de sanglier"},
-		{"Tunique de l'aventurier", "Fourrure de loup", "Peau de troll"},
-		{"Bottes de l'aventurier", "Fourrure de loup", "Cuir de sanglier"},
+		{"Victoire militaire", "Arme de soldat", "Casque de soldat", "Légion militaire"},
+		{"Victoire médiévale", "Ailes de chauve souris", "Dents de chauve souris", "Couronne royale"},
+		{"Victoire jardinale", "Coquille d'escargot", "Fiole de venin", "Dar royal"},
+		{"Victoire abyssale", "Queue du dauphin", "Dent de la mer", "Trident empoisonné"},
 	}
 
 	Cyan.Println("---- Items à forger ----")
@@ -212,6 +213,36 @@ func (p *Personnage) forgeron() {
 
 			ClearConsole()
 			Green.Println("Vous avez acheté " + outilsMarchand[choice-1][0])
+
+			// Ajout des buff stats
+			switch choice {
+			case 1:
+				p.skill[4].Damages += 10
+				p.skill[0].Damages += 10
+				Green.Println("[BUFF] Vous avez gagné 10% de chance de coup critique")
+				Green.Println("[BUFF] Vous avez gagné 10 de dégats automatique")
+			case 2:
+				p.maxHP += 20
+				p.currentHp += 20
+				p.skill[4].Damages += 10
+				Green.Println("[BUFF] Vous avez gagné 10% de chance de coup critique")
+				Green.Println("[BUFF] Vous avez gagné 20 points de vie")
+			case 3:
+				p.skill[0].Damages += 20
+				p.maxHP += 20
+				p.currentHp += 20
+				Green.Println("[BUFF] Vous avez gagné 10 de dégats automatique")
+				Green.Println("[BUFF] Vous avez gagné 20 points de vie")
+			case 4:
+				p.maxHP += 50
+				p.currentHp += 50
+				p.skill[0].Damages += 50
+				p.skill[4].Damages += 20
+				Green.Println("[BUFF] Vous avez gagné 20% de chance de coup critique")
+				Green.Println("[BUFF] Vous avez gagné 50 points de vie")
+				Green.Println("[BUFF] Vous avez gagné 50 de dégats d'attauqe")
+			}
+
 			p.forgeron()
 		}
 	case choice == len(outilsMarchand)+1:
