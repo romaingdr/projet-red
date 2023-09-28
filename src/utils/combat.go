@@ -16,9 +16,9 @@ var (
 	// Listes des ennemis rencontrés durant le jeu
 	Monstres = [][]Ennemy{
 		{
-			{"Basic soldier 1", 1, 200, 20, 50, 25, false},
-			{"Basic soldier 2", 1, 200, 20, 50, 25, false},
-			{"Red soldier", 1, 300, 20, 50, 25, true},
+			{"Basic soldier 1", 120, 120, 20, 50, 25, false},
+			{"Basic soldier 2", 150, 150, 20, 50, 25, false},
+			{"Red soldier", 200, 200, 20, 50, 25, true},
 		},
 
 		{
@@ -44,7 +44,7 @@ var (
 		},
 
 		{
-			{"UNIVERSE MASTER", 700, 700, 60, 120, 70, false},
+			{"UNIVERSE MASTER", 1700, 1700, 60, 120, 70, true},
 		},
 	}
 
