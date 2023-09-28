@@ -5,7 +5,6 @@ package utils
 import (
 	"fmt"
 	"github.com/eiannone/keyboard"
-	"os"
 )
 
 // StartScreen affiche la page d'accueil en ASCII ART pour choisir entre jouer une nouvelle partie et quitter le jeu
@@ -24,7 +23,7 @@ func StartScreen(p *Personnage, state int) {
 		fmt.Println("இ                                     இ")
 		fmt.Println("இ     ➥       NOUVELLE PARTIE         இ")
 		fmt.Println("இ                                     இ")
-		fmt.Println("இ              QUITTER LE JEU         இ")
+		fmt.Println("இ              ANCIENNE SAUVEGARDE    இ")
 		fmt.Println("இ                                     இ")
 		fmt.Println("இஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇ")
 	} else {
@@ -32,7 +31,7 @@ func StartScreen(p *Personnage, state int) {
 		fmt.Println("இ                                     இ")
 		fmt.Println("இ              NOUVELLE PARTIE        இ")
 		fmt.Println("இ                                     இ")
-		fmt.Println("இ     ➥       QUITTER LE JEU          இ")
+		fmt.Println("இ     ➥       ANCIENNE SAUVEGARDE     இ")
 		fmt.Println("இ                                     இ")
 		fmt.Println("இஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇ")
 	}
@@ -58,7 +57,7 @@ func StartScreen(p *Personnage, state int) {
 			p.CreateCharacter()
 		} else {
 			ClearConsole()
-			os.Exit(0)
+			recupSauvegarde()
 		}
 		return // Return the current state when the Enter key is pressed
 	default:

@@ -8,8 +8,18 @@ import (
 	"strconv"
 )
 
+var (
+	db *QuickDB
+)
+
 // Menu affiche le menu principal du jeu.
 func (p *Personnage) Menu() {
+	db = NewQuickDB("database.json")
+	sauvegardePerso := convertInfos(p)
+	db.Set("sauvegarde", sauvegardePerso)
+	sauvegardeItems, sauvegardeNb := convertInfosItems(p)
+	db.Set("sauvegardeItems", sauvegardeItems)
+	db.Set("sauvegardeNb", sauvegardeNb)
 	Cyan.Println("----- Menu -----")
 	fmt.Println("[1] Personnage")
 	fmt.Println("[2] Inventaire")
@@ -32,9 +42,10 @@ func (p *Personnage) Menu() {
 	fmt.Println("[7] Avancement")
 	fmt.Println("[8] Multijoueur - PvP")
 	fmt.Println("[9] Multijoueur - Objectifs")
-	fmt.Println("[10] Quitter le jeu")
+	fmt.Println("[10] Sauvegarder la progression")
+	fmt.Println("[11] Quitter le jeu")
 	Cyan.Println("----------------")
-	fmt.Println("[11] Qui sont-ils | Bonus option")
+	fmt.Println("[12] Qui sont-ils | Bonus option")
 
 	choice, _ := Inputint()
 
@@ -88,9 +99,11 @@ func (p *Personnage) Menu() {
 		ClearConsole()
 		multiObjectives(p)
 	case 10:
+		save(p)
+	case 11:
 		ClearConsole()
 		os.Exit(0)
-	case 11:
+	case 12:
 		ClearConsole()
 		Red.Println("QUI SONT-ILS ? : ABBA | Steven Spielberg | Queen")
 		p.Menu()
@@ -102,6 +115,17 @@ func (p *Personnage) Menu() {
 	}
 }
 
+func save(p *Personnage) {
+	db = NewQuickDB("database.json")
+	sauvegardePerso := convertInfos(p)
+	db.Set("sauvegarde", sauvegardePerso)
+	sauvegardeItems, sauvegardeNb := convertInfosItems(p)
+	db.Set("sauvegardeItems", sauvegardeItems)
+	db.Set("sauvegardeNb", sauvegardeNb)
+	ClearConsole()
+	Green.Println("La progression a été sauvegardée avec succés !")
+	p.Menu()
+}
 func avancement(p *Personnage) {
 	fmt.Println("  -------------------")
 	fmt.Println(" 🔫 -  World War 3")

@@ -48,7 +48,7 @@ func (p *Personnage) CreateCharacter() {
 			{"(%) Critical chance", "Chance d'obtenir un coup critique (inflige le double des dégats)", 10, -1, -1}}
 	}
 	ClearConsole()
-	p.Initialize(nom, classe, 3, 1, hpMax, hpMax, []Item{{"Argent", 300}, {"Potions", 3}}, spells)
+	p.Initialize(nom, classe, 0, 0, hpMax, hpMax, []Item{{"Argent", 300}, {"Potions", 3}}, spells)
 	SpeedMsg("Bienvenue, "+nom+" ! \n", 60, "cyan")
 	fmt.Println()
 	fmt.Print("Appuyez pour entrer dans la partie")

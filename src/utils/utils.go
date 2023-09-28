@@ -27,6 +27,27 @@ func ClearConsole() {
 	fmt.Print(clearScreen)
 }
 
+func convertInfos(p *Personnage) string {
+	var ligneSauvegarde string
+	ligneSauvegarde += p.nom + " "
+	ligneSauvegarde += p.classe + " "
+	ligneSauvegarde += strconv.Itoa(p.currentHp) + " "
+	ligneSauvegarde += strconv.Itoa(p.maxHP) + " "
+	ligneSauvegarde += strconv.Itoa(p.niveau) + " "
+	ligneSauvegarde += strconv.Itoa(p.ennemi) + " "
+	return ligneSauvegarde
+}
+
+func convertInfosItems(p *Personnage) (string, string) {
+	var itemSauvegarde string
+	var NbSauvegarde string
+	for i := range p.inventory {
+		itemSauvegarde += p.inventory[i].Name + " "
+		NbSauvegarde += strconv.Itoa(p.inventory[i].Quantite) + " "
+	}
+	return itemSauvegarde, NbSauvegarde
+}
+
 // inputint lit une entrée de l'utilisateur et renvoie un entier.
 func Inputint() (int, error) {
 	fmt.Print(">> ")
