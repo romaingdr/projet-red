@@ -93,7 +93,9 @@ func (p *Personnage) battle() {
 	}
 	if p.niveau > 7 { // Jeu terminé
 		ClearConsole()
-		Green.Println("Vous avez terminé le jeu !")
+		credit()
+		Input()
+		ClearConsole()
 		p.Menu()
 	}
 	// Sauvegarde des spells qui changent

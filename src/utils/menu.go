@@ -31,7 +31,7 @@ func (p *Personnage) Menu() {
 		} else if p.niveau == 7 {
 			fmt.Println("[6] fin ?")
 		} else {
-			Green.Println("[✔] Jeu terminé")
+			Green.Println("[6] Jeu terminé | Crédits")
 		}
 	}
 	fmt.Println("[7] Avancement")

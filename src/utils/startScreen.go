@@ -27,13 +27,13 @@ func StartScreen(p *Personnage, state int) {
 		fmt.Println("இ                                     இ")
 		fmt.Println("இஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇ")
 	} else {
-		fmt.Println("இஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇ")
+		fmt.Println("இஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇ")
 		fmt.Println("இ                                     இ")
 		fmt.Println("இ              NOUVELLE PARTIE        இ")
 		fmt.Println("இ                                     இ")
 		fmt.Println("இ     ➥       ANCIENNE SAUVEGARDE     இ")
 		fmt.Println("இ                                     இ")
-		fmt.Println("இஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇ")
+		fmt.Println("இஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇஇ")
 	}
 
 	_, key, err := keyboard.GetKey()
