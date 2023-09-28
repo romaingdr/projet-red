@@ -232,3 +232,34 @@ func redSoldier() {
 	fmt.Println("/`  /\\__/\\__,/     >._              )")
 	fmt.Println("/   |__/\\__/  \\____/\\  `-,-.____,.--'\\")
 }
+
+func kingascii() {
+	fmt.Println("                    ____")
+	fmt.Println("                   / ___`\\")
+	fmt.Println("       /|         ( (   \\ \\")
+	fmt.Println("  |^v^v  V|        \\ \\/) ) )")
+	fmt.Println("  \\  ____ /         \\_/ / /")
+	fmt.Println("   ,Y`    `,           / /")
+	fmt.Println("   ||  -  -)           { }")
+	fmt.Println("   \\\\   _\\|            | |")
+	fmt.Println("    \\\\ / _`\\_          / /")
+	fmt.Println("     / |  ~ | ``\\      |_|")
+	fmt.Println("  ,-`  \\    |  \\ \\  ,//(_}")
+	fmt.Println(" /      |   |   | \\/  \\| |")
+	fmt.Println("|       |   |   | '   ,\\ \\")
+	fmt.Println("|     | \\   /  /\\  _/`  | |")
+	fmt.Println("\\     |  | |   | ``     | |")
+	fmt.Println(" |    \\  \\ |   |        | |")
+	fmt.Println(" |    |   |/   |        / /")
+	fmt.Println(" |    |        |        | |")
+}
+
+func mosquito() {
+	fmt.Println("      |  /")
+	fmt.Println("      | /_)")
+	fmt.Println("  OO.--._")
+	fmt.Println("  / \\  /  \\")
+	fmt.Println(" /   /| \\  \\")
+	fmt.Println("    / |  '--'")
+	fmt.Println("      '")
+}

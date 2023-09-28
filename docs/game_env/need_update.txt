@@ -1,3 +1,0 @@
-- Equilibrage general
-- Lore entre les combats
-- Graphisme ascii

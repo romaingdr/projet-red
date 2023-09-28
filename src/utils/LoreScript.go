@@ -132,6 +132,8 @@ func ScriptNiv2(p *Personnage) {
 	} else {
 		fmt.Println("Une fois la deuxième chauve-souris achevée, un immense roi apparut devant lui")
 		Input()
+		kingascii()
+		fmt.Println()
 		SpeedMsg("- Tu ne croyais pas t'en sortir comme ça ?\n", 20, "red")
 		Input()
 		SpeedMsg("- Qui êtes-vous, pourquoi me voulez vous du mal ?\n", 20, "cyan")
@@ -195,7 +197,8 @@ func ScriptNiv3(p *Personnage) {
 		SpeedMsg("- Oui exactement !\n", 20, "cyan")
 		Input()
 		SpeedMsg("- Il va falloir me passer sur les ailes !\n", 20, "red")
-
+		fmt.Println()
+		mosquito()
 		Input()
 	} else {
 		wasp()
