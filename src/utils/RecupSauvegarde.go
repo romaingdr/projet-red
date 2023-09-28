@@ -1,16 +1,12 @@
+// FICHIER UTILISE POUR RECUPERER LA SAUVEGARDE DE LA PARTIE PRECEDENTE
+
 package utils
 
 import (
 	"strconv"
-	"strings"
 )
 
-func splitWords(input string) []string {
-	// Utilisez la fonction strings.Split pour diviser la chaîne en mots en utilisant l'espace comme séparateur.
-	words := strings.Split(input, " ")
-	return words
-}
-
+// recupSauvegarde récupère les données du fichier 'database.json' et crée un personnage avec
 func recupSauvegarde() {
 	var p1 Personnage
 	var items []Item

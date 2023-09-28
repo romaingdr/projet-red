@@ -11,6 +11,7 @@ import (
 	"time"
 )
 
+// Variables globales utiles au mode PvP multijoueur
 var (
 	MaxHpEnnemy     int
 	CurrentHpEnnemy int
@@ -21,7 +22,7 @@ var (
 	poisonUsed      = false
 )
 
-// SliceArgument sert à split les arguments reçus par le socket et séparés par des "|"
+// sliceArgument sert à split les arguments reçus par le socket et séparés par des "|"
 func sliceArgument(phrase string) (string, string) {
 	mots := strings.Split(phrase, "|")
 	if len(mots) == 2 {
@@ -69,7 +70,7 @@ func MultiStartScreen(p *Personnage) {
 	}
 }
 
-// Coté client
+// COTE CLIENT
 // joinServer sert à rejoindre un serveur avec l'ip locale de l'ordinateur host , connexion sur le port 12345
 func joinServer(p *Personnage) {
 	ClearConsole()
@@ -151,7 +152,7 @@ func joinServer(p *Personnage) {
 	}
 }
 
-// Coté serveur
+// COTE SERVEUR
 // createServer sert à créer un serveur sur le port 12345 de la machine host
 func createServer(p *Personnage) {
 	listener, err := net.Listen("tcp", "0.0.0.0:12345")
@@ -182,7 +183,7 @@ func createServer(p *Personnage) {
 	}
 }
 
-// handelConnection sert à maintenir la connexion sur le serveur et gérer les sockets d'informations entrantes et sortantes
+// handleConnection sert à maintenir la connexion sur le serveur et gérer les sockets d'informations entrantes et sortantes
 func handleConnection(conn net.Conn, p *Personnage) {
 	defer conn.Close()
 
@@ -249,7 +250,6 @@ func handleConnection(conn net.Conn, p *Personnage) {
 	}
 }
 
-// Autre fonctions
 // afficheHp sert à afficher progressivement les hp du joueur et de l'ennemi
 func afficheHp(p *Personnage, pseudo string, current int, max int) {
 	SpeedMsg(p.nom+" - "+strconv.Itoa(p.currentHp)+"/"+strconv.Itoa(p.maxHP)+"\n", 20, "green")

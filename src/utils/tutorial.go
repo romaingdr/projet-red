@@ -65,7 +65,7 @@ func (p *Personnage) battleTutorial() {
 	p.Menu()
 }
 
-// abilitiesTutorial affiche les abilités disponibles dans le tutoriel de combat et permet à l'utilisateur d'en choisir une.
+// AbilitiesTutorial affiche les abilités disponibles dans le tutoriel de combat et permet à l'utilisateur d'en choisir une.
 func AbilitiesTutorial() string {
 
 	fmt.Println("---- Abilités ----")
@@ -88,7 +88,7 @@ func AbilitiesTutorial() string {
 	}
 }
 
-// battleMenuTutorial affiche le menu du tutoriel de combat.
+// BattleMenuTutorial affiche le menu du tutoriel de combat.
 func BattleMenuTutorial() {
 	fmt.Println("----- A votre tour -----")
 	fmt.Print("[1] Attaque auto")

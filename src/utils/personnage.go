@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-// createCharacter initialise un nouveau personnage.
+// CreateCharacter initialise un nouveau personnage.
 func (p *Personnage) CreateCharacter() {
 	ClearConsole()
 
@@ -48,7 +48,7 @@ func (p *Personnage) CreateCharacter() {
 			{"(%) Critical chance", "Chance d'obtenir un coup critique (inflige le double des dégats)", 10, -1, -1}}
 	}
 	ClearConsole()
-	p.Initialize(nom, classe, 0, 0, hpMax, hpMax, []Item{{"Argent", 300}, {"Potions", 3}}, spells)
+	p.Initialize(nom, classe, 2, 0, hpMax, hpMax, []Item{{"Argent", 300}, {"Potions", 3}}, spells)
 	SpeedMsg("Bienvenue, "+nom+" ! \n", 60, "cyan")
 	fmt.Println()
 	fmt.Print("Appuyez pour entrer dans la partie")
@@ -69,7 +69,7 @@ func (p *Personnage) Initialize(nom string, classe string, niveau int, ennemi in
 	p.skill = skill
 }
 
-// choixClasse affiche les classes disponibles et permet à l'utilisateur de choisir une classe.
+// ChooseClass affiche les classes disponibles et permet à l'utilisateur de choisir une classe.
 func ChooseClass() string {
 	ClearConsole()
 

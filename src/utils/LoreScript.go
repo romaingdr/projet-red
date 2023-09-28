@@ -1,3 +1,5 @@
+// FICHIER UTILISE POUR AFFICHER L'HISTOIRE DU JEU PENDANT LES NIVEAUX POUR UNE MEILLEURE IMMERSION DANS LE JEU
+
 package utils
 
 import (
@@ -91,6 +93,8 @@ func ScriptNiv2(p *Personnage) {
 		fmt.Println("Pour au final atterir dans ce qui semble être à première vue un chateau abandonné.")
 		Input()
 		ClearConsole()
+		castle()
+		fmt.Println()
 		SpeedMsg("- Où ai-je encore atterit ?\n", 20, "cyan")
 		Input()
 		SpeedMsg("- Viens par ici\n", 20, "green")
@@ -332,6 +336,7 @@ func ScriptNiv6(p *Personnage) {
 	}
 }
 
+// finalChoice affiche le menu du choix final (fin de l'histoire)
 func finalChoice(p *Personnage) {
 	SpeedMsg(p.nom+" ,\n", 30, "default")
 	SpeedMsg("Félicitation, vous avez battu le maitre de l'univers\n", 30, "default")

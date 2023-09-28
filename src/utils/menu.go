@@ -1,25 +1,20 @@
 // FICHIER UTILISE POUR LA GESTION DU MENU ET DE SES SOUS MENUS
+
 package utils
 
 import (
 	"fmt"
-	_ "github.com/mattn/go-sqlite3"
 	"os"
 	"strconv"
 )
 
+// Variable globales utiles pour le menu
 var (
 	db *QuickDB
 )
 
 // Menu affiche le menu principal du jeu.
 func (p *Personnage) Menu() {
-	db = NewQuickDB("database.json")
-	sauvegardePerso := convertInfos(p)
-	db.Set("sauvegarde", sauvegardePerso)
-	sauvegardeItems, sauvegardeNb := convertInfosItems(p)
-	db.Set("sauvegardeItems", sauvegardeItems)
-	db.Set("sauvegardeNb", sauvegardeNb)
 	Cyan.Println("----- Menu -----")
 	fmt.Println("[1] Personnage")
 	fmt.Println("[2] Inventaire")
@@ -115,17 +110,7 @@ func (p *Personnage) Menu() {
 	}
 }
 
-func save(p *Personnage) {
-	db = NewQuickDB("database.json")
-	sauvegardePerso := convertInfos(p)
-	db.Set("sauvegarde", sauvegardePerso)
-	sauvegardeItems, sauvegardeNb := convertInfosItems(p)
-	db.Set("sauvegardeItems", sauvegardeItems)
-	db.Set("sauvegardeNb", sauvegardeNb)
-	ClearConsole()
-	Green.Println("La progression a été sauvegardée avec succés !")
-	p.Menu()
-}
+// avancement affiche la timeline de l'histoire du jeu, les ennemis rencontrés
 func avancement(p *Personnage) {
 	fmt.Println("  -------------------")
 	fmt.Println(" 🔫 -  World War 3")
@@ -159,6 +144,7 @@ func avancement(p *Personnage) {
 
 }
 
+// forgeron ouvre le sous-menu du forgeron dans lequel sont créés les buff avec les items drop par les ennemis
 func (p *Personnage) forgeron() {
 	outilsMarchand := [][]string{
 		{"Victoire militaire", "Arme de soldat", "Casque de soldat", "Légion militaire"},

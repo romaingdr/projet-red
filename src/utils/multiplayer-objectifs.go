@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// Variables globales utiles au mode de jeu Objectif Multijoueur
 var (
 	joueurs       = make(map[string]int)
 	nbPlayers     int

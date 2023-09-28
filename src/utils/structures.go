@@ -2,7 +2,7 @@
 
 package utils
 
-// Ennemy Structure
+// Ennemy Structure des ennemis du jeu
 type Ennemy struct {
 	Name           string
 	HpCurrent      int
@@ -13,7 +13,7 @@ type Ennemy struct {
 	IsBoss         bool
 }
 
-// Spell Structure
+// Spell Structure des capacités du personnage principal
 type Spell struct {
 	Name        string
 	Description string
@@ -22,25 +22,25 @@ type Spell struct {
 	MaxUse      int
 }
 
-// Personnage structure
+// Personnage structure du personnage principal
 type Personnage struct {
-	nom       string `json:"nom"`
-	classe    string `json:"classe"`
-	niveau    int    `json:"niveau"`
-	ennemi    int    `json:"ennemi"`
-	currentHp int    `json:"currentHp"`
-	maxHP     int    `json:"maxHP"`
-	inventory []Item `json:"inventory"`
+	nom       string
+	classe    string
+	niveau    int
+	ennemi    int
+	currentHp int
+	maxHP     int
+	inventory []Item
 	skill     []Spell
 }
 
-// Item structure
+// Item structure d'un item dans l'inventaire
 type Item struct {
-	Name     string `json:"name"`
-	Quantite int    `json:"quantite"`
+	Name     string
+	Quantite int
 }
 
-// Article structure
+// Article structure d'un article dans le marchand
 type Article struct {
 	Name        string
 	Price       int
@@ -50,6 +50,7 @@ type Article struct {
 	Unique      bool
 }
 
+// EnnemyObjective structure de l'ennemi dans l'objectif
 type EnnemyObjective struct {
 	Name      string
 	HpCurrent int

@@ -13,6 +13,7 @@ import (
 	"unicode"
 )
 
+// Variables globales des couleurs de police
 var (
 	Red    = color.New(color.FgRed)
 	Blue   = color.New(color.FgBlue)
@@ -21,12 +22,19 @@ var (
 	Cyan   = color.New(color.FgCyan)
 )
 
-// clearConsole efface la console.
+// splitWords sert à séparer les arguments d'une chaine de cactères avec la séparation " " et de les mettres dans une liste
+func splitWords(input string) []string {
+	words := strings.Split(input, " ")
+	return words
+}
+
+// ClearConsole efface la console.
 func ClearConsole() {
 	const clearScreen = "\033[H\033[2J"
 	fmt.Print(clearScreen)
 }
 
+// convertInfos sert à mettre toutes les informations du personnage séparés par " " dans une chaine de caractère
 func convertInfos(p *Personnage) string {
 	var ligneSauvegarde string
 	ligneSauvegarde += p.nom + " "
@@ -38,17 +46,22 @@ func convertInfos(p *Personnage) string {
 	return ligneSauvegarde
 }
 
+// convertInfosItems sert à mettre toutes les informations des items séparés par " " dans une chaine de caractère
 func convertInfosItems(p *Personnage) (string, string) {
 	var itemSauvegarde string
 	var NbSauvegarde string
-	for i := range p.inventory {
-		itemSauvegarde += p.inventory[i].Name + " "
-		NbSauvegarde += strconv.Itoa(p.inventory[i].Quantite) + " "
+	for i := 0; i < len(p.inventory); i++ {
+		if i > 0 {
+			itemSauvegarde += " " // Ajouter un espace entre les éléments
+			NbSauvegarde += " "   // Ajouter un espace entre les éléments
+		}
+		itemSauvegarde += p.inventory[i].Name
+		NbSauvegarde += strconv.Itoa(p.inventory[i].Quantite)
 	}
 	return itemSauvegarde, NbSauvegarde
 }
 
-// inputint lit une entrée de l'utilisateur et renvoie un entier.
+// Inputint lit une entrée de l'utilisateur et renvoie un entier.
 func Inputint() (int, error) {
 	fmt.Print(">> ")
 	scanner := bufio.NewScanner(os.Stdin)
@@ -61,14 +74,27 @@ func Inputint() (int, error) {
 	return chiffre, nil
 }
 
-// input lit une entrée de l'utilisateur et renvoie une chaîne de caractères.
+// Input lit une entrée de l'utilisateur et renvoie une chaîne de caractères.
 func Input() string {
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
 	return scanner.Text()
 }
 
-// onlyLetters vérifie si une chaîne de caractères ne contient que des lettres.
+// save est utilisé pour sauvegarder la progression en cours dans un fichier 'database.json'
+func save(p *Personnage) {
+	db = NewQuickDB("database.json")
+	sauvegardePerso := convertInfos(p)
+	db.Set("sauvegarde", sauvegardePerso)
+	sauvegardeItems, sauvegardeNb := convertInfosItems(p)
+	db.Set("sauvegardeItems", sauvegardeItems)
+	db.Set("sauvegardeNb", sauvegardeNb)
+	ClearConsole()
+	Green.Println("La progression a été sauvegardée avec succés !")
+	p.Menu()
+}
+
+// OnlyLetters vérifie si une chaîne de caractères ne contient que des lettres.
 func OnlyLetters(input string) bool {
 	if len(input) > 10 || len(input) < 3 {
 		return false
@@ -81,7 +107,7 @@ func OnlyLetters(input string) bool {
 	return true
 }
 
-// capitalizeString met en majuscule la première lettre d'une chaîne de caractères.
+// CapitalizeString met en majuscule la première lettre d'une chaîne de caractères.
 func CapitalizeString(input string) string {
 	if len(input) > 0 {
 		input = strings.ToUpper(string(input[0])) + strings.ToLower(input[1:])
@@ -89,7 +115,7 @@ func CapitalizeString(input string) string {
 	return input
 }
 
-// message : ton message , speed : la vitesse (met sur 20), colorName : la couleur que tu veux (red, green, blue, cyan, yellow)
+// SpeedMsg permet d'afficher progressivement un message dans le terminal en spécifiant la couleur et la vitesse
 func SpeedMsg(message string, speed int, colorName string) {
 	defaultColor := color.New(color.FgWhite)
 

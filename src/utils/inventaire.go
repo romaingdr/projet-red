@@ -80,7 +80,7 @@ func (p *Personnage) findIndex(itemName string) int {
 	return index // On retourne l'index ou on l'a trouvé (si on trouve pas index = -1)
 }
 
-// Fonction pour vérifier si un item avec un nom donné se trouve dans une liste d'items
+// alreadyBuy fonction pour vérifier si un item avec un nom donné se trouve dans une liste d'items
 func (p *Personnage) alreadyBuy(itemName string) bool {
 	for _, item := range p.inventory {
 		if item.Name == itemName {
