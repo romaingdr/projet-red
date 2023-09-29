@@ -162,10 +162,10 @@ func (p *Personnage) forgeron() {
 			for y := 1; y < len(outilsMarchand[i]); y++ {
 				if p.findIndex(outilsMarchand[i][y]) != -1 {
 					Green.Print(outilsMarchand[i][y])
-					fmt.Print(", ")
+					fmt.Print(" | ")
 				} else {
 					Red.Print(outilsMarchand[i][y])
-					fmt.Print(", ")
+					fmt.Print(" | ")
 				}
 			}
 			fmt.Println("")
